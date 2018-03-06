@@ -1,0 +1,19 @@
+Package: morphr
+Type: Package
+Title: Shape analysis
+Version: 0.2.1
+Authors@R: c(person(given="Shantanu", family="Joshi", role=c("cre", "aut"), email="shjoshi@ieee.org"),
+             person(given="Xiaoling", family="Zhang", role=c("aut"), email="tonyzhang1997@ucla.edu")
+             )
+Description: Morphr allows shape analysis of curves. It uses fdasrvf as the backend.
+License: GPL-2 | file LICENSE
+Copyright: The Regents of the University of California.
+LazyData: true
+Encoding: UTF-8
+Imports:
+    Rcpp (>= 0.12.15)
+LinkingTo: 
+    Rcpp, RcppArmadillo
+RoxygenNote: 6.0.1
+URL: http://brainsuite.org/bssr
+Suggests: testthat

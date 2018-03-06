@@ -1,0 +1,12 @@
+.Rproj.user
+.Rprofile
+.Rhistory
+man/.Rapp.history
+.RData
+.Ruserdata
+src/*.o
+src/*.so
+src/*.dll
+packrat/*
+packrat/lib*/
+.DS_Store
