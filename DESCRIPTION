@@ -11,7 +11,10 @@ Copyright: The Regents of the University of California.
 LazyData: true
 Encoding: UTF-8
 Imports:
-    Rcpp (>= 0.12.15)
+    fdasrvf,
+    Rcpp (>= 0.12.15),
+    XML,
+    knotR
 LinkingTo: 
     Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1
