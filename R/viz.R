@@ -19,10 +19,10 @@ plot_curve <- function(p,colorstr){
   n = nrow(p)
   T_col = ncol(p)
   if(n == 2){
-    lines(p[1,],p[2,],type = "l",col = colorval)
+    plot(p[1,],p[2,],type = "l",col = colorval)
   }
   if(n == 3){
-    lines(p[1,],p[2,],type = "l",col = colorval)
+    plot(p[1,],p[2,],type = "l",col = colorval)
     for (i in 1:T_col){
       text(p[1,i],p[2,i],toString(i),cex = 0.7)
     }
