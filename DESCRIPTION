@@ -12,7 +12,7 @@ LazyData: true
 Encoding: UTF-8
 Imports:
     fdasrvf,
-    Rcpp (>= 0.12.15),
+    Rcpp,
     XML,
     knotR
 LinkingTo: 
