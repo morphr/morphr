@@ -144,8 +144,8 @@ plot_pca_variation <- function(pathname){
 
 
 # Needs modification
-mat_file_path_name = '/Users/xlzzxl/Desktop/files/drive-download-20180305T024235Z-001/all_mean.mat'
-color_code_path_name = '/Users/xlzzxl/Desktop/files/drive-download-20180305T024235Z-001/Taxoncolorcodes.csv'
+#mat_file_path_name = '/Users/xlzzxl/Desktop/files/drive-download-20180305T024235Z-001/all_mean.mat'
+#csv_datafile = '/Users/xlzzxl/Desktop/files/drive-download-20180305T024235Z-001/Taxoncolorcodes.csv'
 mdsplot <- function(mat_file_path_name, color_code_path_name){
   data_mds <- R.matlab::readMat(mat_file_path_name)
   alpha_t_array <- list()
@@ -155,7 +155,7 @@ mdsplot <- function(mat_file_path_name, color_code_path_name){
   #qmean <- data_mds$qmean
   #qarray <- data_mds$qarray
   geo_dis <- data_mds$geo.dist
-  Taxoncolorcodes <- readr::read_csv(color_code_path_name,col_names = FALSE)
+  Taxoncolorcodes <- read.csv(csv_datafile, header = T)
   filenames <- Taxoncolorcodes$X1
   color_code <- Taxoncolorcodes$X3
   geo_dis <- as.vector(unlist(geo_dis))
