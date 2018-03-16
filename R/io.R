@@ -156,7 +156,8 @@ read_ucf_multiple_levels <- function(filepath){
   
 }
 
-main_closed <- function(fid){
+main_closed <- function(path){
+  fid = read.table(path, stringsAsFactors = FALSE)[[1]]
   i = 1
   X = NULL
   while(i<=length(fid)){
