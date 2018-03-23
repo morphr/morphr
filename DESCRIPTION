@@ -14,7 +14,10 @@ Imports:
     fdasrvf,
     Rcpp,
     XML,
-    knotR
+    knotR,
+    pracma,
+    vegan,
+    ggplot2
 LinkingTo: 
     Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1
