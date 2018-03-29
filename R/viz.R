@@ -352,3 +352,21 @@ display_eigen_and_original_shapes_along_extremes <- function(X,qmean,alpha_t_arr
   
   
 }
+
+#' @export
+plot_curve_geodesic <- function(curve1, curve2) {
+  
+  if (is.matrix(curve1) && is.matrix(curve2)) {
+    ## curve1 and curve2 are coordinates
+    result <- fdasrvf::curve_geodesic(beta1 = curve1, beta2 = curve2, k = 7)
+  }
+  else {
+    ## assume curve1 and curve2 are files
+    beta1 <- read_curve(curve1)
+    beta2 <- read_curve(curve2)
+    result <- fdasrvf::curve_geodesic(t(beta1), t(beta2), k = 7)
+  }
+  
+  print(result)
+}
+  
