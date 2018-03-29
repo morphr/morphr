@@ -186,6 +186,18 @@ main_closed <- function(path){
   
 }
 
+#' @export
+read_curve <- function(curve_file) {
+  if (! file.exists(curve_file) ) {
+    stop(sprintf('Curve file %s does not exist.', curve_file), call. = FALSE)
+  }
+  
+  ext <- tools::file_ext(curve_file)
+  switch(ext,
+         "svg" = {return( read_svg_file(curve_file) )},
+         "ucf" = {return( read_ucf_multiple_levels(curve_file) )}
+         )
+}
 
 
 
