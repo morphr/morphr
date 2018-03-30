@@ -1,8 +1,9 @@
 #' Plot the curve p with color value
 #' @param p coordinates of curve
 #' @param colorstr color value
+#' @param l Default value is False, which means returning a plot
 #' @export
-plot_curve <- function(p,colorstr){
+plot_curve <- function(p,colorstr,l = FALSE){
   colorval <- NULL
   if(colorstr == 'k'){
     colorval = "black"
@@ -19,10 +20,18 @@ plot_curve <- function(p,colorstr){
   n = nrow(p)
   T_col = ncol(p)
   if(n == 2){
-    plot(p[1,],p[2,],type = "l",col = colorval)
+    if (l == TRUE){
+      lines(p[1,],p[2,],type = "l",col = colorval)
+    }else{
+      plot(p[1,],p[2,],type = "l",col = colorval)
+    }
   }
   if(n == 3){
-    plot(p[1,],p[2,],type = "l",col = colorval)
+    if (l == TRUE){
+      lines(p[1,],p[2,],type = "l",col = colorval)
+    }else{
+      plot(p[1,],p[2,],type = "l",col = colorval)
+    }
     for (i in 1:T_col){
       text(p[1,i],p[2,i],toString(i),cex = 0.7)
     }
@@ -114,9 +123,9 @@ display_eigen_and_original_shapes_along_extremes <- function(X,qmean,alpha_t_arr
   for(i in 1:length(Xtemp)){
     pfinal = repose_curve(Xtemp[[i]],1,R,c(0,i*dt,i*dt))
     if(epsilon_array[[i]] == 0){
-      plot_curve(pfinal,'r')
+      plot_curve(pfinal,'r',l = TRUE)
     }else{
-      plot_curve(pfinal,'b')
+      plot_curve(pfinal,'b',l = TRUE)
     }
   }
   
@@ -155,9 +164,9 @@ mdsplot <- function(mat_file_path_name, color_code_path_name){
   #qmean <- data_mds$qmean
   #qarray <- data_mds$qarray
   geo_dis <- data_mds$geo.dist
-  Taxoncolorcodes <- read.csv(csv_datafile, header = T)
-  filenames <- Taxoncolorcodes$X1
-  color_code <- Taxoncolorcodes$X3
+  Taxoncolorcodes <- read.csv(csv_datafile, header = F, stringsAsFactors = FALSE)
+  filenames <- Taxoncolorcodes[,1]
+  color_code <- Taxoncolorcodes[,3]
   geo_dis <- as.vector(unlist(geo_dis))
   distance_matrix <- pracma::squareform(geo_dis)
   example_NMDS=vegan::metaMDS(distance_matrix,k=2,trymax=200)
@@ -173,7 +182,7 @@ mdsplot <- function(mat_file_path_name, color_code_path_name){
     zpos = 0
     labels[[i]] = filenames[[i]]
     pfinal = repose_curve(q_to_curve(curve_to_q(data_mds$X[[i]][[1]])),0.12,R,c(xpos,ypos,0))
-    plot_curve(pfinal,color_code[i])
+    plot_curve(pfinal,color_code[i],l = TRUE)
     text(xpos, ypos, labels = filenames[i],cex=0.3)
   }
   
@@ -285,88 +294,3 @@ plot_dendrogram <- function(mat_file_path_name, color_code_path_name){
   D.clust$labels <- taxon_codes$V1
   plot(D.clust, xlab = '', main='Dwarf Morphometric Placement', sub='', ylab='')
 }
-
-display_eigen_and_original_shapes_along_extremes <- function(X,qmean,alpha_t_array,covdata,eigdir,fignum){
-  U = covdata$U
-  S = covdata$S
-  C = covdata$Cn
-  Y = covdata$Y
-  N = nrow(U)
-  zerovect_new <- matrix(0,1,40)
-  gphi=zerovect_new
-  gth=zerovect_new
-  n = nrow(qmean)
-  T_col = ncol(qmean)
-  stp = 8
-  t = eigdir
-  Unew = U[,t]
-  sigma = diag(S)
-  theta = pi/2
-  if(n==2){
-    R = pracma::eye(2)
-  }else if(n==3){
-    R = pracma::eye(2)
-  }
-  
-  
-  dx = 100.05
-  dy = 100.05
-  stp = 8
-  ctr = 1
-  N = 10
-  delta = 2
-  epsilon_array = list()
-  epsilon_array[1] = 0
-  Xtemp = list()
-  for(epsilon in seq(-1*delta,delta,2*delta/N)){
-    epsilon_array[ctr] = epsilon
-    gphi = epsilon*sqrt(sigma[eigdir])*t(U[,eigdir])
-    final_alpha_t = matrix(0,n,T_col)
-    for (i in 1:length(Y)){
-      final_alpha_t = final_alpha_t +gphi[i] * Y[[i]]
-    }
-    temp_temp = geodesic_flow(qmean,final_alpha_t,stp)
-    qfinal = temp_temp[1]
-    qfinal = qfinal[[1]]
-    alpha_final = temp_temp[2]
-    if(is.null(ncol(qfinal))){
-      
-      Xtemp[[ctr]] = matrix(0,2,100)
-      ctr = ctr+1
-    }else{
-      Xtemp[[ctr]] = q_to_curve(R%*%qfinal)
-      ctr = ctr+1
-    }
-    
-  }
-  dt = 0.15
-  plot(c(-1,1),c(0,2), type="n", main = paste("Shape variation along Eigen-axis",eigdir)) 
-  for(i in 1:length(Xtemp)){
-    pfinal = repose_curve(Xtemp[[i]],1,R,c(0,i*dt,i*dt))
-    if(epsilon_array[[i]] == 0){
-      plot_curve(pfinal,'r')
-    }else{
-      plot_curve(pfinal,'b')
-    }
-  }
-  
-  
-}
-
-#' @export
-plot_curve_geodesic <- function(curve1, curve2) {
-  
-  if (is.matrix(curve1) && is.matrix(curve2)) {
-    ## curve1 and curve2 are coordinates
-    result <- fdasrvf::curve_geodesic(beta1 = curve1, beta2 = curve2, k = 7)
-  }
-  else {
-    ## assume curve1 and curve2 are files
-    beta1 <- read_curve(curve1)
-    beta2 <- read_curve(curve2)
-    result <- fdasrvf::curve_geodesic(t(beta1), t(beta2), k = 7)
-  }
-  
-  print(result)
-}
-  
