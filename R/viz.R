@@ -235,6 +235,7 @@ verify_shapes <- function(pathname){
   }
 }
 
+
 #' Display Rshiny
 #' @export
 run_shiny <- function() {
@@ -245,6 +246,8 @@ run_shiny <- function() {
   
   shiny::runApp(appDir, display.mode = "normal")
 }
+
+
 
 #need modification
 deformation_field_all <- function(pathname){
