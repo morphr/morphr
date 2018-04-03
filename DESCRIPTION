@@ -17,7 +17,8 @@ Imports:
     knotR,
     pracma,
     vegan,
-    ggplot2
+    ggplot2,
+    shiny
 LinkingTo: 
     Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1
