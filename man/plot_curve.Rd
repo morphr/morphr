@@ -4,12 +4,14 @@
 \alias{plot_curve}
 \title{Plot the curve p with color value}
 \usage{
-plot_curve(p, colorstr)
+plot_curve(p, colorstr, l = FALSE)
 }
 \arguments{
 \item{p}{coordinates of curve}
 
 \item{colorstr}{color value}
+
+\item{l}{Default value is False, which means returning a plot}
 }
 \description{
 Plot the curve p with color value
