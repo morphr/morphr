@@ -235,6 +235,17 @@ verify_shapes <- function(pathname){
   }
 }
 
+#' Display Rshiny
+#' @export
+run_shiny <- function() {
+  appDir <- system.file("shiny-examples", "myapp", package = "morphr")
+  if (appDir == "") {
+    stop("Could not find example directory. Try re-installing `morphr`.", call. = FALSE)
+  }
+  
+  shiny::runApp(appDir, display.mode = "normal")
+}
+
 #need modification
 deformation_field_all <- function(pathname){
   data_df <- R.matlab::readMat(pathname)
