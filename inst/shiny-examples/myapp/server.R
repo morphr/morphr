@@ -147,7 +147,7 @@ server <- function(input, output) {
     qmean <- data_mds$qmean
     qarray <- data_mds$qarray
     geo_dis <- data_mds$geo.dist
-    Taxoncolorcodes <- readr::read_csv(input$color_path,col_names = FALSE)
+    Taxoncolorcodes <- read.csv(input$color_path, header = F, stringsAsFactors = FALSE)
     filenames <- Taxoncolorcodes[,1]
     color_code <- Taxoncolorcodes[,3]
     geo_dis <- as.vector(unlist(geo_dis))

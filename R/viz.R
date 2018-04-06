@@ -3,7 +3,6 @@
 #' @param colorstr color value
 #' @param l Default value is False, which means returning a plot
 #' @export
-plot_curve <- function(p,colorstr,l = FALSE){
   colorval <- NULL
   if(colorstr == 'k'){
     colorval = "black"
@@ -164,7 +163,7 @@ mdsplot <- function(mat_file_path_name, color_code_path_name){
   #qmean <- data_mds$qmean
   #qarray <- data_mds$qarray
   geo_dis <- data_mds$geo.dist
-  Taxoncolorcodes <- read.csv(csv_datafile, header = F, stringsAsFactors = FALSE)
+  Taxoncolorcodes <- read.csv(color_code_path_name, header = F, stringsAsFactors = FALSE)
   filenames <- Taxoncolorcodes[,1]
   color_code <- Taxoncolorcodes[,3]
   geo_dis <- as.vector(unlist(geo_dis))
