@@ -3,6 +3,7 @@
 #' @param colorstr color value
 #' @param l Default value is False, which means returning a plot
 #' @export
+plot_curve <- function(p,colorstr,l = FALSE){
   colorval <- NULL
   if(colorstr == 'k'){
     colorval = "black"
