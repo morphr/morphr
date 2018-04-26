@@ -56,16 +56,17 @@ geodesic_flow <- function(q,w,stp){
   qt = q
   lw = sqrt(innerprod_q(w,w))
   if(lw<0.001){
-    alpha = 0
+    alpha = list()
+    alpha[[1]] = q
     return (list(qt,alpha))
   }
   alpha = list()
   alpha[[1]] = q
   for (i in 2:(stp+1)){
     qt = qt+w/stp
-    qt = qt/sqrt(innerprod_q(qt,qt))
+    qt = project_curve(qt)
     alpha[[i]] = qt
-    w = w - innerprod_q(w,qt)*qt
+    w = project_tangent(w,qt)
     w = w*lw/sqrt(innerprod_q(w,w))
   }
   return(list(qt,alpha))
@@ -147,12 +148,9 @@ innerprod_q<-function(v1, v2){
 #' @param T_col dimension of sample points
 #' @return matrix of the basis
 form_basis_d <- function(d,T_col){
-  x = pracma::linspace(0,1,T_col)
-  xdarray = matrix(0,d,T_col)
-  for(i in 1:d){
-    xdarray[i,] = i*x
-  }
-  V = rbind(rep(sqrt(2)),sqrt(2)*cos(2*pi*xdarray),sqrt(2)*sin(2*pi*xdarray))
+  x = pracma::linspace(0,2*pi,T_col)
+  xdarray = t(t(seq(1:d)))%*%x
+  V = rbind(cos(xdarray)/sqrt(pi), sin(xdarray)/sqrt(pi))
   return(V)
 }
 
@@ -229,14 +227,9 @@ gram_schmidt <- function(X){
 project_curve <- function(q){
   T1 = ncol(q)
   n = nrow(q)
-  if (n==2){
-    dt = 0.3
-  }
-  
-  if (n==3) {
-    dt = 0.2
-  }
-  
+
+  dt = 0.3
+
   epsilon = 1/60*2*pi/T1;
   
   e = diag(1,n)
@@ -270,21 +263,30 @@ project_curve <- function(q){
     
     # Compute the residue
     for (i in 1:n){
-      G[i] = trapz(s,qnew[i,]*qnorm)
+      G[i] = pracma::trapz(s,qnew[i,]*qnorm)
     }
     
     res = -1*G
     
+
+    
+    
+    
+    C[iter] = fdasrvf:::pvecnorm(res)
+    if(any(is.nan(J))||(any(is.infinite(J)))){
+      cat('Projection may be inaccurate. \n')
+      qnew = q
+      qnew = qnew/sqrt(innerprod_q(qnew,qnew))
+      break
+      
+    }
     if (fdasrvf:::pvecnorm(res)<epsilon)
       break
-    
     x = solve(J,res)
-    C[iter] = fdasrvf:::pvecnorm(res)
     
-    delG = fdasrvf:::find_basis_normal(qnew)
+    delG = form_basis_normal_a(qnew)
     tmp = 0
     for (i in 1:n){
-      print(delG[[i]])
       tmp = tmp + x[i]*delG[[i]]*dt
     }
     qnew = qnew + tmp

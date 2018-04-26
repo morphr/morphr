@@ -3,7 +3,7 @@
 #' @param colorstr color value
 #' @param l Default value is False, which means returning a plot
 #' @export
-plot_curve <- function(p,colorstr,l = FALSE){
+plot_curve <- function(p, colorstr, l = FALSE, filename = ''){
   colorval <- NULL
   if(colorstr == 'k'){
     colorval = "black"
@@ -15,25 +15,27 @@ plot_curve <- function(p,colorstr,l = FALSE){
     colorval = "magenta"
   }else if(colorstr == 'g'){
     colorval = "green"
+  }else{
+    colorval = "black"
   }
   styleval <- '-'
   n = nrow(p)
   T_col = ncol(p)
   if(n == 2){
     if (l == TRUE){
-      lines(p[1,],p[2,],type = "l",col = colorval)
+      lines(p[1,],p[2,],type = "l",col = colorval,lwd=1)
     }else{
-      plot(p[1,],p[2,],type = "l",col = colorval)
+      plot(p[1,],p[2,],type = "l",col = colorval,lwd=1)
     }
   }
   if(n == 3){
     if (l == TRUE){
-      lines(p[1,],p[2,],type = "l",col = colorval)
+      lines(p[1,],p[2,],type = "l",col = colorval,lwd=1)
     }else{
-      plot(p[1,],p[2,],type = "l",col = colorval)
+      plot(p[1,],p[2,],type = "l",col = colorval,lwd=1,axes=FALSE, xlab = '', ylab = '', main = filename )
     }
     for (i in 1:T_col){
-      text(p[1,i],p[2,i],toString(i),cex = 0.7)
+      text(p[1,i],p[2,i],toString(i),cex = 1)
     }
     text(p[1,1],p[2,1],toString(0))
   }
@@ -137,14 +139,7 @@ display_eigen_and_original_shapes_along_extremes <- function(X,qmean,alpha_t_arr
 #' @param pathname location of the file
 #' @param alpha_t_array list of tangent vectors from the mean shape
 #' @export
-plot_pca_variation <- function(pathname){
-  data_ppa <- R.matlab::readMat(pathname)
-  alpha_t_array <- list()
-  for(i in 1:length(data_ppa$alpha.array)) {
-    alpha_t_array[[i]]<- data_ppa$alpha.t.array[[i]][[1]]
-  }
-  qmean <- data_ppa$qmean
-  qarray <- data_ppa$qarray
+plot_pca_variation <- function(alpha_t_array, qmean, qarray){
   cat('Building TPCA model ...')
   covdata = build_tpca_model_from_mean(qmean,alpha_t_array)
   cat('done.\n')
@@ -152,18 +147,10 @@ plot_pca_variation <- function(pathname){
 }
 
 
-# Needs modification
-#mat_file_path_name = '/Users/xlzzxl/Desktop/files/drive-download-20180305T024235Z-001/all_mean.mat'
-#csv_datafile = '/Users/xlzzxl/Desktop/files/drive-download-20180305T024235Z-001/Taxoncolorcodes.csv'
-mdsplot <- function(mat_file_path_name, color_code_path_name){
-  data_mds <- R.matlab::readMat(mat_file_path_name)
-  alpha_t_array <- list()
-  for(i in 1:length(data_mds$alpha.array)) {
-    alpha_t_array[[i]]<- data_mds$alpha.t.array[[i]][[1]]
-  }
-  #qmean <- data_mds$qmean
-  #qarray <- data_mds$qarray
-  geo_dis <- data_mds$geo.dist
+
+mdsplot <- function(alpha_t_array, geo_dis, X, color_code_path_name){
+  
+  
   Taxoncolorcodes <- read.csv(color_code_path_name, header = F, stringsAsFactors = FALSE)
   filenames <- Taxoncolorcodes[,1]
   color_code <- Taxoncolorcodes[,3]
@@ -175,15 +162,16 @@ mdsplot <- function(mat_file_path_name, color_code_path_name){
   R = pracma::eye(2)
   L = 0.08
   labels = list()
-  plot(c(-0.2,0.17),c(-0.15,0.15), type="n", xlab="X",ylab="Y", main = "MDS scatter plot including Dwarf") 
+  plot(c(min(Y[,1]),max(Y[,1])),c(min(-Y[,2]),max(-Y[,2])), type="n", xlab="X",ylab="Y", main = "MDS scatter plot including Dwarf") 
   for(i in 1:ncol(distance_matrix)){
-    xpos = (-1)*Y[i,1]
-    ypos = (-1)*Y[i,2]
+    #Modification
+    xpos = Y[i,1]
+    ypos = -Y[i,2]
     zpos = 0
     labels[[i]] = filenames[[i]]
-    pfinal = repose_curve(q_to_curve(curve_to_q(data_mds$X[[i]][[1]])),0.12,R,c(xpos,ypos,0))
+    pfinal = repose_curve(q_to_curve(curve_to_q(X[[i]])),0.12,R,c(xpos,ypos,0))
     plot_curve(pfinal,color_code[i],l = TRUE)
-    text(xpos, ypos, labels = filenames[i],cex=0.3)
+    text(xpos, ypos, labels = filenames[i],cex=0.5)
   }
   
 }
@@ -230,8 +218,8 @@ verify_shapes <- function(pathname){
     fname = fid[i]
     X = read_ucf_multiple_levels(fname)[[1]]
     X = t(X)
-    plot(c(min(X[1,]),max(X[1,])),c(min(X[2,]),max(X[2,])), type="n") 
-    plot_curve(X,'r')
+    plot_curve(X,'r',filename = fname)
+
   }
 }
 
@@ -239,7 +227,7 @@ verify_shapes <- function(pathname){
 #' Display Rshiny
 #' @export
 run_shiny <- function() {
-  appDir <- system.file("shiny-examples", "myapp", package = "morphr")
+  appDir <- system.file("shinyapps", "myapp", package = "morphr")
   if (appDir == "") {
     stop("Could not find example directory. Try re-installing `morphr`.", call. = FALSE)
   }
@@ -249,15 +237,9 @@ run_shiny <- function() {
 
 
 
-#need modification
-deformation_field_all <- function(pathname){
-  data_df <- R.matlab::readMat(pathname)
-  alpha_t_mean = data_df$alpha.t.mean
+
+deformation_field_all <- function(alpha_t_array, pmean, qmean,X){
   alpha_t_mean = 0
-  alpha_t_array <- list()
-  for(i in 1:length(data_df$alpha.array)) {
-    alpha_t_array[[i]]<- data_df$alpha.t.array[[i]][[1]]
-  }
   for (jj in 1:length(alpha_t_array)){
     alpha_t_mean = alpha_t_mean + alpha_t_array[[jj]]
   }
@@ -273,13 +255,11 @@ deformation_field_all <- function(pathname){
   x_coord = c(1:100)
   lines(x_coord,alpha_t_mag_smooth,type = "l",col = "blue")
   lines(x_coord,alpha_t_mag,type = "l",col = "red")
-  pmean = data_df$pmean
-  qmean = data_df$qmean
   pmean = q_to_curve(qmean)
   x = pmean[1,]
   y = pmean[2,]
   z = rep(0,length(x))
-  X1 <- data_df$X[[1]][[1]]
+  X1 <- X[[1]]
   X1 <- pmean
   #alpha_t_norm <- apply(alpha_t_array, 2, function(x) sqrt(sum(x^2)))
   alpha_t_mag_smooth = as.vector(alpha_t_mag_smooth)
@@ -298,13 +278,32 @@ deformation_field_all <- function(pathname){
   
 }
 
-#Modification
-plot_dendrogram <- function(mat_file_path_name, color_code_path_name){
-  data <- R.matlab::readMat("/Users/xlzzxl/srp99/ontogeny_Hypacrosaurus_stebingeri/all_mean.mat")
-  geo_dist <- as.vector(unlist(data$geo.dist))
-  taxon_codes <- read.csv('/Users/xlzzxl/srp99/ontogeny_Hypacrosaurus_stebingeri/Taxoncolorcodes.csv', header = F)
+
+plot_dendrogram <- function(geo_dist, color_code_path_name){
+  geo_dist = unlist(geo_dist)
+  Taxoncolorcodes <- read.csv(color_code_path_name, header = F, stringsAsFactors = FALSE)
   
-  D.clust <- hclust(as.dist(squareform(geo_dist)),method="average")
-  D.clust$labels <- taxon_codes$V1
+  D.clust <- hclust(as.dist(pracma::squareform(geo_dist)),method="average")
+  D.clust$labels <- Taxoncolorcodes$V1
   plot(D.clust, xlab = '', main='Dwarf Morphometric Placement', sub='', ylab='')
+}
+
+
+PCA_plot <- function(alpha_t_array, qmean, qarray, colorpath){
+  Taxoncolorcodes <- readr::read_csv(colorpath,col_names = FALSE)
+  filenames <- Taxoncolorcodes$X1
+  color_code <- Taxoncolorcodes$X3
+  covdata = build_tpca_model_from_mean(qmean,alpha_t_array)
+  eigproj_landmarks = save_eigen_projections(covdata,alpha_t_array,1:5,'eig_proto.csv')
+  R = pracma::eye(2)
+  plot(c(min(eigproj_landmarks[[1]]),max(eigproj_landmarks[[1]])),c(min(eigproj_landmarks[[2]]),max(eigproj_landmarks[[2]])), type="n", xlab="Eigen Axis 1",ylab="Eigen Axis 2", main = "PCA scatter plot of Humeri including indeterminate") 
+  for(i in 1:length(eigproj_landmarks$`eig 1`)){
+    xpos = eigproj_landmarks[[1]][i]
+    ypos = eigproj_landmarks[[2]][i]
+    pfinal = repose_curve(q_to_curve(qarray[[i]]),0.12,R,c(xpos,ypos,0))
+    plot_curve(pfinal,color_code[i],l = TRUE)
+    #print(c(xpos,ypos))
+    #print(filenames[i+1])#depending on heading
+    text(xpos, ypos, labels = filenames[i],cex=0.3)
+  }
 }
