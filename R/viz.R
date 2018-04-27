@@ -25,7 +25,7 @@ plot_curve <- function(p, colorstr, l = FALSE, filename = ''){
     if (l == TRUE){
       lines(p[1,],p[2,],type = "l",col = colorval,lwd=1)
     }else{
-      plot(p[1,],p[2,],type = "l",col = colorval,lwd=1)
+      plot(p[1,],p[2,],type = "l",col = colorval,lwd=1,axes=FALSE, xlab = '', ylab = '', main = filename )
     }
   }
   if(n == 3){
@@ -47,18 +47,18 @@ plot_curve <- function(p, colorstr, l = FALSE, filename = ''){
 #' @param input_n number of iterations
 #' @param X shape
 #' @return plots
-get_plot_output_list <- function(max_plots, input_n, X) {
+get_plot_output_list <- function(max_plots, input_n, X, filenames) {
   # Insert plot output objects the list
   
   
   
   plot_output_list <- lapply(1:input_n, function(i) {
-    plotname <- paste("Original Shape", i, sep="")
+    plotname <- filenames[i]
     plot_output_object <- plotOutput(plotname, height = 280, width = 250)
     plot_output_object <- renderPlot({
       plot(X[[i]][1,],X[[i]][2,], type = "l",axes=FALSE,xlab = '', ylab = '', main = plotname)
       
-    })
+    },height = 200, width = 300)
   })
   
   do.call(tagList, plot_output_list) # needed to display properly.

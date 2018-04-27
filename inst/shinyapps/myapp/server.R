@@ -48,9 +48,8 @@ server <- function(input, output) {
       sum_sq_dist = temp_all_mean_shape[[6]]
       qmean_new = project_curve(qmean)
       pmean = q_to_curve(qmean_new)
-      
+      plot_curve(pmean,'r', l = FALSE, filename = "Mean Shape")
     }
-    plot_curve(pmean,'r')
     
   })
   
@@ -58,7 +57,7 @@ server <- function(input, output) {
   
   
   
-  output$geo_dist <- renderTable({
+  output$geo_dist <- plotly::renderPlotly({
     req(input$file1)
     req(input$var)
     req(input$goButton)
@@ -94,16 +93,19 @@ server <- function(input, output) {
     }
     rownames(output_result) <- rc_name
     colnames(output_result) <- rc_name
-    return(output_result)
+    return(plotly::plot_ly(x = rc_name, y = rc_name ,z = output_result, type = "heatmap"))
   })
   
   
   observe({
     
     req(input$file1)
+    req(input$file_ready)
     #req(input$var == "Original Curves")
     X = main_closed(input$file1$datapath)
-    output$plots <- renderUI({ get_plot_output_list(length(X),length(X),X) })
+    Taxoncolorcodes <- readr::read_csv(input$Color_File,col_names = FALSE)
+    filenames <- Taxoncolorcodes$X1
+    output$plots <- renderUI({ get_plot_output_list(length(X),length(X),X, filenames) })
   })
   
   

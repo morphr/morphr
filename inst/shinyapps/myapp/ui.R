@@ -33,10 +33,7 @@ ui <- fluidPage(
       p("Click to get dendogram plot"),
       actionButton("dfa", "Deformation Field (All)"),
       p("Click to get Deformation Field (All) plot"),
-      fluidRow(column(3, verbatimTextOutput("value"))),
-      tags$hr(),
-      h2("Uploaded plots"),
-      uiOutput("plots")
+      fluidRow(column(3, verbatimTextOutput("value")))
     ),
     
     # Main panel for displaying outputs ----
@@ -44,12 +41,21 @@ ui <- fluidPage(
       
       # Output: Data file ----
       titlePanel("Shape Analysis"),
-      tableOutput("geo_dist"),
-      plotOutput("mean_shape"),
-      plotOutput("PCA_plot"),
-      plotOutput("mds_plot"),
-      plotOutput("dendogram_plot"),
-      plotOutput("dfa_plot")
+      fluidRow(
+        column(3,uiOutput("plots")),
+        column(9,plotly::plotlyOutput("geo_dist", width = "100%", height="600px"),
+               plotOutput("mean_shape"),
+               plotOutput("PCA_plot"),
+               plotOutput("mds_plot"),
+               plotOutput("dendogram_plot"),
+               plotOutput("dfa_plot"))
+      )
+      #plotly::plotlyOutput("geo_dist", width = "100%", height="600px"),
+      #plotOutput("mean_shape"),
+      #plotOutput("PCA_plot"),
+      #plotOutput("mds_plot"),
+      #plotOutput("dendogram_plot"),
+      #plotOutput("dfa_plot")
       
       
       
