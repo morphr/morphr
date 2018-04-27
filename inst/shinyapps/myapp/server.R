@@ -62,6 +62,7 @@ server <- function(input, output) {
     req(input$file1)
     req(input$var)
     req(input$goButton)
+    req(input$file_ready)
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Calculating distances", value = 1)
@@ -86,9 +87,10 @@ server <- function(input, output) {
       }
     }
     rc_name <- c()
+    Taxoncolorcodes <- readr::read_csv(input$Color_File,col_names = FALSE)
+    filenames <- Taxoncolorcodes$X1
     for(i in 1:length(X)){
-      a <- paste("shape",i, sep = "")
-      rc_name <- c(rc_name,a)
+      rc_name <- c(rc_name,filenames[i])
     }
     rownames(output_result) <- rc_name
     colnames(output_result) <- rc_name
