@@ -1,6 +1,4 @@
-<a align="left">
-  <img src="https://github.com/morphr/morphr/blob/master/logo.png" width="350"/>
-</a>
+<img src="https://github.com/morphr/morphr/raw/master/logo.png" width="350"/>
 
 # Morphr (c) 2018 
 
