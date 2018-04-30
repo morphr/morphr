@@ -104,4 +104,4 @@ deformation_field_all(alpha_t_array, pmean, qmean,X)
 library(morphr)
 run_shiny()
 ```
-<img src=https://github.com/morphr/morphr/blob/master/R_Shiny_Demonstration.png>
+<img src=https://github.com/morphr/morphr/raw/master/R_Shiny_Demonstration.png>
