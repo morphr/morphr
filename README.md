@@ -28,7 +28,7 @@ For demonstration, we present a case study for paleontological shapes. For a dat
 path = 'Path for ucf or svg file list'
 verify_shapes(path)
 ```
-<img src=https://github.com/morphr/morphr/raw/master/Input%20Shape.png width=50% />
+<img src=https://github.com/morphr/morphr/raw/master/assets/images/Input_Shape.png width=50% />
 
 * Construct Mean shape
 ```{r}
@@ -44,7 +44,7 @@ qmean_new = project_curve(qmean)
 pmean = q_to_curve(qmean_new)
 plot_curve(pmean,'r',filename = 'Mean Shape')
 ```
-<img src=https://github.com/morphr/morphr/raw/master/Mean_Shape.png width=50% />
+<img src=https://github.com/morphr/morphr/raw/master/assets/images/Mean_Shape.png width=50% />
 
 
 * Calculate Geodesic Distance Heatmap
@@ -70,36 +70,36 @@ rownames(output_result) <- rc_name
 colnames(output_result) <- rc_name
 plotly::plot_ly(x = rc_name, y = rc_name ,z = output_result, type = "heatmap")
 ```
-<img src=https://github.com/morphr/morphr/raw/master/geo_distance.png width=50% />
+<img src=https://github.com/morphr/morphr/raw/master/assets/images/geo_distance.png width=50% />
 
 * PCA Plot on Eigen Axis 1 and 2
 ```{r}
 alpha_t_array = All_mean_shape[[3]]
 PCA_plot(alpha_t_array, qmean, qarray, color_file_path)
 ```
-<img src=https://github.com/morphr/morphr/raw/master/PCA_Plot.png width=50% />
+<img src=https://github.com/morphr/morphr/raw/master/assets/images/PCA_Plot.png width=50% />
 
 * MDS Plot
 ```{r}
 mdsplot(alpha_t_array, geo_dist, X, color_file_path)
 ```
-<img src=https://github.com/morphr/morphr/raw/master/MDS_Plot.png width=50% />
+<img src=https://github.com/morphr/morphr/raw/master/assets/images/MDS_Plot.png width=50% />
 
 * Dendrogram
 ```{r}
 plot_dendrogram(geo_dist, color_file_path)
 ```
-<img src=https://github.com/morphr/morphr/raw/master/Dendrogram.png width=50% />
+<img src=https://github.com/morphr/morphr/raw/master/assets/images/Dendrogram.png width=50% />
 
 * Deformation Field
 ```{r}
 deformation_field_all(alpha_t_array, pmean, qmean,X)
 ```
-<img src=https://github.com/morphr/morphr/raw/master/Deformation_Field.png width=50% />
+<img src=https://github.com/morphr/morphr/raw/master/assets/images/Deformation_Field.png width=50% />
 
 * R Shiny Demonstration
 ```{r}
 library(morphr)
 run_shiny()
 ```
-<img src=https://github.com/morphr/morphr/raw/master/R_Shiny_Demonstration.png>
+<img src=https://github.com/morphr/morphr/raw/master/assets/images/R_Shiny_Demonstration.png>
