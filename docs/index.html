@@ -11,7 +11,6 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="jquery.sticky-kit.min.js"></script><script src="pkgdown.js"></script><meta property="og:title" content="Shape analysis">
 <meta property="og:description" content="Morphr allows shape analysis of curves. It uses fdasrvf as the backend.">
-<meta property="og:image" content="/logo.png">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -86,7 +85,7 @@ devtools::<span class="kw"><a href="http://www.rdocumentation.org/packages/devto
 <p>Reconstruct Shape</p>
 <pre class="{r}"><code>path = 'Path for ucf or svg file list'
 verify_shapes(path)</code></pre>
-<p><img src="https://github.com/morphr/morphr/raw/master/Input%20Shape.png" width="50%"></p>
+<p><img src="https://github.com/morphr/morphr/raw/master/assets/images/Input_Shape.png" width="50%"></p>
 </li>
 <li>
 <p>Construct Mean shape</p>
@@ -101,7 +100,7 @@ qmean = All_mean_shape[[1]]
 qmean_new = project_curve(qmean)
 pmean = q_to_curve(qmean_new)
 plot_curve(pmean,'r',filename = 'Mean Shape')</code></pre>
-<p><img src="https://github.com/morphr/morphr/raw/master/Mean_Shape.png" width="50%"></p>
+<p><img src="https://github.com/morphr/morphr/raw/master/assets/images/Mean_Shape.png" width="50%"></p>
 </li>
 <li>
 <p>Calculate Geodesic Distance Heatmap</p>
@@ -125,34 +124,34 @@ rc_name &lt;- c(rc_name,filenames[i])
 rownames(output_result) &lt;- rc_name
 colnames(output_result) &lt;- rc_name
 plotly::plot_ly(x = rc_name, y = rc_name ,z = output_result, type = "heatmap")</code></pre>
-<p><img src="https://github.com/morphr/morphr/raw/master/geo_distance.png" width="50%"></p>
+<p><img src="https://github.com/morphr/morphr/raw/master/assets/images/geo_distance.png" width="50%"></p>
 </li>
 <li>
 <p>PCA Plot on Eigen Axis 1 and 2</p>
 <pre class="{r}"><code>alpha_t_array = All_mean_shape[[3]]
 PCA_plot(alpha_t_array, qmean, qarray, color_file_path)</code></pre>
-<p><img src="https://github.com/morphr/morphr/raw/master/PCA_Plot.png" width="50%"></p>
+<p><img src="https://github.com/morphr/morphr/raw/master/assets/images/PCA_Plot.png" width="50%"></p>
 </li>
 <li>
 <p>MDS Plot</p>
 <pre class="{r}"><code>mdsplot(alpha_t_array, geo_dist, X, color_file_path)</code></pre>
-<p><img src="https://github.com/morphr/morphr/raw/master/MDS_Plot.png" width="50%"></p>
+<p><img src="https://github.com/morphr/morphr/raw/master/assets/images/MDS_Plot.png" width="50%"></p>
 </li>
 <li>
 <p>Dendrogram</p>
 <pre class="{r}"><code>plot_dendrogram(geo_dist, color_file_path)</code></pre>
-<p><img src="https://github.com/morphr/morphr/raw/master/Dendrogram.png" width="50%"></p>
+<p><img src="https://github.com/morphr/morphr/raw/master/assets/images/Dendrogram.png" width="50%"></p>
 </li>
 <li>
 <p>Deformation Field</p>
 <pre class="{r}"><code>deformation_field_all(alpha_t_array, pmean, qmean,X)</code></pre>
-<p><img src="https://github.com/morphr/morphr/raw/master/Deformation_Field.png" width="50%"></p>
+<p><img src="https://github.com/morphr/morphr/raw/master/assets/images/Deformation_Field.png" width="50%"></p>
 </li>
 <li>
 <p>R Shiny Demonstration</p>
 <pre class="{r}"><code>library(morphr)
 run_shiny()</code></pre>
-<p><img src="https://github.com/morphr/morphr/raw/master/R_Shiny_Demonstration.png"></p>
+<p><img src="https://github.com/morphr/morphr/raw/master/assets/images/R_Shiny_Demonstration.png"></p>
 </li>
 </ul>
 </div>
