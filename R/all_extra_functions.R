@@ -14,7 +14,7 @@ back_parallel_transport_c <- function(wfinal, alpha){
     return(list(wtilde, twtilde))
 }
 
-compute_elastic_geodesic <- function(q1,q2,stp,d,dt){
+compute_elastic_geodesic <- function(q1,q2,stp = 7,d = 5,dt = 0.1){
     q2 = project_curve(q2)
     n = length(q1)
     T_col = ncol(q1)
