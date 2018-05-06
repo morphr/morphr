@@ -349,7 +349,7 @@ geodesic_distance_all <- function(qarray){
             ctr = ctr+1
         }
     }
-    return(list(alpha,alpha_t,Anormiter,EgeoC,gamma,geo_dist))
+    return(list(alpha = alpha, alpha_t = alpha_t, Anormiter = Anormiter, EgeoC = EgeoC, gamma = gamma, geo_dist = geo_dist))
 }
 
 geodesic_q <- function(q1,q2,stp){
