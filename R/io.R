@@ -4,7 +4,7 @@
 #' @param r number of iterations (default value 3)
 #' @return coordinates of shape
 #' @export
-read_svg_file <- function(file_path, N = 100, r = 3){
+read_svg_file <- function(file_path, N = 100, r = 10){
   #Function require XML library. Read in the command in the SVG file
   file_type = "O"
   doc <- XML::htmlParse(file_path)
@@ -56,8 +56,8 @@ read_svg_file <- function(file_path, N = 100, r = 3){
     }
     
     #Use fdasrvf package to create equal distance point based on specified N and plot those points
-    point_resample <- fdasrvf::resamplecurve(t(point), N, mode = "O")
-    return(t(point_resample))
+    point_resample <- resample_curve(t(point), N = N)
+    return(point_resample)
     
   }else{
     p_modified <- stringr::str_extract_all(p,"\\-?[0-9.cC]+")[[1]]
@@ -107,8 +107,8 @@ read_svg_file <- function(file_path, N = 100, r = 3){
     }
     #plot(point)
     
-    point_resample <- fdasrvf::resamplecurve(t(point), N, mode = "O")
-    return(t(point_resample))
+    point_resample <- resample_curve(t(point), N = N)
+    return(point_resample)
     
   }
   

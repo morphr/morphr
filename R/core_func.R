@@ -323,3 +323,42 @@ q_to_curve <- function(q){
   p <- matrix(unlist(p), ncol = length(p[[1]]), byrow = TRUE)
   return(p)
 }
+
+#' Resample curve to get N points
+#' @param p vector of coordinates of curves
+#' @param N number of points desired
+#' @return numeric vector 
+#' @export
+resample_curve <- function(p,N){
+  n = nrow(p)
+  T_col = ncol(p)
+  pdiff = t(as.matrix(diff(t(p))))
+  normdiff = c()
+  for(i in 1:(T_col-1)){
+    normdiff = c(normdiff,norm(as.matrix(pdiff[,i])))
+  }
+  normdiff[normdiff > 0] = 1
+  pu = list()
+  for(i in 1:n){
+    pu[[i]] = p[i,pracma::finds(normdiff)]
+  }
+  pu = rbind(pu[[1]],pu[[2]])
+  n = nrow(pu)
+  T_col = ncol(pu)
+  pgrad = matrix(rep(0,n*T_col),n,T_col)
+  for(i in 1:n){
+    pgrad[i,] = pracma::gradient(pu[i,])
+  }
+  ds = c()
+  for(i in 1:T_col){
+    ds = c(ds,pracma::Norm(pgrad[,i]))
+  }
+  S = cumsum(ds)
+  newS = pracma::linspace(S[1], S[length(S)], N)
+  pnew = matrix(rep(0,n,N),n,N)
+  for(i in 1:n){
+    pnew[i,] = pracma::interp1(S,pu[i,],newS)
+  }
+  
+  return(pnew)
+}
