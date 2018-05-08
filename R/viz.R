@@ -307,3 +307,98 @@ PCA_plot <- function(alpha_t_array, qmean, qarray, colorpath){
     text(xpos, ypos, labels = filenames[i],cex=0.3)
   }
 }
+
+#' Plot the geodesic path
+#' @param alpha list of shapes along the geodesic 
+#' @param color color name
+#' @param L1 length(size) of first curve
+#' @param L2 length(size) of second curve
+#' @return figure handle
+#' @export
+plot_geodesic_path <- function(alpha, color = "cycle", L1 = 1, L2 = 1) {
+  dim_alpha <- dim(alpha)
+  n <- dim_alpha[1]
+  T1 <- dim_alpha[2]
+  k <- dim_alpha[3]
+  
+  if (n == 3)
+    stop('Ploting for 3D curves not supported.')
+  curve_path <- plyr::aaply(alpha, 3, q_to_curve)
+  
+  # Center all curves to origin 0 and shift them succesively by delta
+  # Linearly interpolate the scale from L1 to L2 and rescale all the curves
+  L <- seq(L1, L2, length=k)
+  dt <- 0.25*(L1 + L2)/2
+  shifts <- matrix(c(1:k*dt, rep(0, k)), nrow = 2, ncol = k, byrow = T)
+  for (ii in 1:k) {
+    curve_path[ii,,] <- sweep(curve_path[ii,,], 1, rowMeans(curve_path[ii,,]), FUN="-")
+    curve_path[ii,,] <- L[ii]*curve_path[ii,,]
+    curve_path[ii,,] <- sweep(curve_path[ii,,], 1, shifts[, ii], FUN="+")
+  }
+  
+  if (color == "cycle") {
+    jet_color <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
+    colors <- jet_color(k)
+  }
+  else
+    colors <- rep("red", k)
+  
+  ii <- 1
+  df <- data.frame(x = curve_path[ii,1, ], y = curve_path[ii,2,])
+  p <- ggplot2::ggplot(df, ggplot2::aes(x , y) ) + ggplot2::geom_path(size = 1, color = colors[ii]) 
+  for (ii in 2:k) {
+    df <- data.frame(x = curve_path[ii,1, ], y = curve_path[ii,2,])
+    p <- p + ggplot2::geom_path(data = df, color = colors[ii], size=1)
+  }
+  p <- p + ggplot2::coord_fixed() + ggplot2::scale_y_reverse()+  ggplot_axis_off()
+  print(p)
+  return(p)
+}
+
+#' Plot magnitude of the deformation field
+#' @param alpha_t tangent vector for the deformation field
+#' @param beta coordinate curve that will overlay the deformation field
+#' @param titletext caption for the figure
+#' @return figure handle
+#' @export
+plot_deformation_field <- function(alpha_t, beta, titletext="") {
+  alpha_t_mag = c()  
+  alpha_t <- alpha_t[,,2]
+  for (i in 1:ncol(alpha_t)){
+    alpha_t_mag[i] = pracma::Norm(alpha_t[,i])
+  }
+  alpha_t_mag = (alpha_t_mag - min(alpha_t_mag))/(max(alpha_t_mag) - min(alpha_t_mag))
+  alpha_t_mag_smooth = smooth(alpha_t_mag, 3)
+  alpha_t_mag_smooth = (alpha_t_mag_smooth - min(alpha_t_mag_smooth))/(max(alpha_t_mag_smooth) - min(alpha_t_mag_smooth))
+  x = beta[1,]
+  y = beta[2,]
+  z = rep(0,length(x))
+  X1 <- beta
+  alpha_t_mag_smooth = as.vector(alpha_t_mag_smooth)
+  alpha_t_mag = as.vector(alpha_t_mag)
+  dat = data.frame(x = X1[1,], y = X1[2,], alpha_t_mag = alpha_t_mag, alpha_t_mag_smooth = alpha_t_mag_smooth)
+  
+  jet_color <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
+  
+  
+  p <- ggplot2::ggplot(dat, ggplot2::aes(x , y, color = alpha_t_mag_smooth)) + ggplot2::geom_path(size = 4) + 
+    ggplot2::scale_y_reverse() + ggplot2::scale_color_gradientn(colors =jet_color(256)) + ggplot2::theme(legend.text=ggplot2::element_text(size=14)) +
+    ggplot2::labs(color="Deformation") + ggplot2::labs(title=titletext) + ggplot2::theme(title = ggplot2::element_text(size = ggplot2::rel(1.8))) +
+    ggplot2::xlab('') + ggplot2::ylab('') + ggplot2::coord_fixed() + ggplot_axis_off()
+  
+  print(p)
+  return(p)
+  
+}
+  
+  
+ggplot_axis_off <- function() {
+  ggplot2::theme(
+    axis.text.x=ggplot2::element_blank(),
+    axis.text.y=ggplot2::element_blank(),
+    axis.ticks=ggplot2::element_blank(),
+    axis.title.x=ggplot2::element_blank(),
+    axis.title.y=ggplot2::element_blank(),
+    plot.margin=grid::unit(c(0,0,0,0), "mm")
+  )
+}
