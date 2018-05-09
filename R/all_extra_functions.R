@@ -264,7 +264,7 @@ find_mean_shape <- function(qarray){
     }
     sum_sq_dist_iter = unlist(sum_sq_dist_iter)
     sum_sq_dist_iter = sum_sq_dist_iter/N
-    return(list(qmean,alpha_array, alpha_t_array,norm_alpha_t_mean,gamma_array,sum_sq_dist_iter,Egeo_array,geo_dist_array))
+    return(list(qmean=qmean,alpha_array=alpha_array, alpha_t_array=alpha_t_array,norm_alpha_t_mean=norm_alpha_t_mean,gamma_array=gamma_array,sum_sq_dist_iter=sum_sq_dist_iter,Egeo_array=Egeo_array,geo_dist_array=geo_dist_array))
 }
 
 form_basis_d_q <- function(V,q){
