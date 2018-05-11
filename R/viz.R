@@ -288,53 +288,44 @@ plot_dendrogram <- function(geo_dist, color_code_path_name){
   plot(D.clust, xlab = '', main='Dwarf Morphometric Placement', sub='', ylab='')
 }
 
-pcaplot <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2)) {
+pcaplot <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), titletxt = "") {
   Taxoncolorcodes <- readr::read_csv(colorpath,col_names = TRUE)
   filenames <- Taxoncolorcodes$specimen_ID
   color_code <- Taxoncolorcodes$color
   covdata = build_tpca_model_from_mean(qmean,alpha_t_array)
   eigproj_landmarks <- get_eigen_projections(covdata,alpha_t_array,1:5)
   R = pracma::eye(2)
-  # plot(c(min(eigproj_landmarks[[1]]),max(eigproj_landmarks[[1]])),c(min(eigproj_landmarks[[2]]),max(eigproj_landmarks[[2]])), type="n", xlab="Eigen Axis 1",ylab="Eigen Axis 2", main = "PCA scatter plot") 
-  
+
+  class_color_code <- data.frame(label=levels(factor(Taxoncolorcodes$class)), 
+                                 colors = RColorBrewer::brewer.pal(nlevels(factor(Taxoncolorcodes$class)), name = "Set1"))
+  class_color_map <- match(Taxoncolorcodes$class, class_color_code$label)
   
   ii <- 1
-  color_code[ii] <- "red"
-  xpos = eigproj_landmarks[[1]][ii]
-  ypos = eigproj_landmarks[[2]][ii]
+  # color_code[ii] <- "red"
+  xpos = eigproj_landmarks[[ eigdir[1] ]][ii]
+  ypos = eigproj_landmarks[[ eigdir[2] ]][ii]
   pfinal = repose_curve(q_to_curve(qarray[[ii]]),0.12,R,c(xpos,ypos,0))
   df <- data.frame(x = pfinal[1, ], y = pfinal[2,])
-  p <- ggplot2::ggplot(df, ggplot2::aes(x , y) ) + ggplot2::geom_path(size = 1, color = color_code[ii]) + 
-    ggplot2::geom_text(ggplot2::aes(x=xpos, y=ypos, label=filenames[ii]), size=4,hjust="inward", vjust="inward")
+  df2 <- data.frame(labelname = filenames[ii], x = xpos, y = ypos)
+  p <- ggplot2::ggplot(df, ggplot2::aes(x , y) ) + ggplot2::geom_path(size = 1, color = as.character(class_color_code$colors[class_color_map[ii]])) +
+    annotate("text", x = xpos, y = ypos, label = filenames[ii], size = 3, fontface = 2)
 
   for (ii in 2:length(eigproj_landmarks$eig1)) {
-    xpos = eigproj_landmarks[[1]][ii]
-    ypos = eigproj_landmarks[[2]][ii]
-    color_code[ii] <- "red"
+    xpos = eigproj_landmarks[[ eigdir[1] ]][ii]
+    ypos = eigproj_landmarks[[ eigdir[2] ]][ii]
+    # color_code[ii] <- "red"
     pfinal = repose_curve(q_to_curve(qarray[[ii]]),0.12,R,c(xpos,ypos,0))
     df <- data.frame(x = pfinal[1, ], y = pfinal[2,])
-    p <- p + ggplot2::geom_path(data = df, color = color_code[ii], size=1) 
-    + ggplot2::geom_text(ggplot2::aes(x=xpos, y=ypos, label=filenames[ii]), size=4,hjust="inward", vjust="inward")
+    df2 <- data.frame(labelname = filenames[ii], x = xpos, y = ypos)
+    p <- p + ggplot2::geom_path(data = df, color = as.character(class_color_code$colors[class_color_map[ii]]), size=1) + 
+      annotate("text", x = xpos, y = ypos, label = filenames[ii], size = 2, fontface = 2)
   }
-  p <- p + ggplot2::coord_fixed() + ggplot2::scale_y_reverse()
-  print(p)
+  p <- p + ggplot2::coord_fixed() + ggplot2::scale_y_reverse() +
+        ggplot2::labs(x = sprintf('Eigen axis %d', eigdir[1]), y = sprintf('Eigen axis %d', eigdir[2])) + 
+        ggplot2::ggtitle(titletxt) + ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) + ggplot_set_axis()
+    
   return(p)  
   
-  
-  # 
-  # 
-  # for(i in 1:length(eigproj_landmarks$`eig1`)){
-  #   xpos = eigproj_landmarks[[1]][i]
-  #   ypos = eigproj_landmarks[[2]][i]
-  #   pfinal = repose_curve(q_to_curve(qarray[[i]]),0.12,R,c(xpos,ypos,0))
-  #   plot_curve(pfinal,color_code[i],l = TRUE)
-  #   #print(c(xpos,ypos))
-  #   #print(filenames[i+1])#depending on heading
-  #   text(xpos, ypos, labels = filenames[i],cex=0.3)
-  # }
-  # return(eigproj_landmarks)  
-  # 
-  # 
 }
 
 
@@ -451,4 +442,17 @@ ggplot_axis_off <- function() {
     axis.title.y=ggplot2::element_blank(),
     plot.margin=grid::unit(c(0,0,0,0), "mm")
   )
+}
+
+ggplot_set_axis <- function() {
+  return(
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(size = rel(2)),
+      axis.text.x = ggplot2::element_text(size = rel(1)),
+      axis.text.y = ggplot2::element_text(size = rel(1)),
+      axis.title.x = ggplot2::element_text(size = rel(2)),
+      axis.title.y = ggplot2::element_text(size = rel(2))
+      )
+  )
+
 }
