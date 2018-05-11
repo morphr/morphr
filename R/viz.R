@@ -67,6 +67,94 @@ get_plot_output_list <- function(max_plots, input_n, X, filenames) {
 }
 
 
+plot_eigenshapes <- function(qmean, alpha_t_array, covdata, eigdir) {
+  
+   X <- get_eigenshapes(qmean, alpha_t_array, covdata, eigdir)
+   dt = 0.15
+   n = nrow(qmean)
+   T_col = ncol(qmean)
+   
+   if(n==2){
+     R = pracma::eye(2)
+   }else if(n==3){
+     R = pracma::eye(2)
+   }
+   
+   epsilon_array = list()
+   epsilon_array[1] = 0
+   
+   plot(c(-1,1),c(0,2), type="n", main = paste("Shape variation along Eigen-axis",eigdir)) 
+   for(i in 1:length(X)){
+     pfinal = repose_curve(X[[i]],1,R,c(0,i*dt,i*dt))
+     if(epsilon_array[[i]] == 0){
+       plot_curve(pfinal,'r',l = TRUE)
+     }else{
+       plot_curve(pfinal,'b',l = TRUE)
+     }
+   }
+   
+}
+
+get_eigenshapes <- function(qmean, alpha_t_array, covdata, eigdir) {
+
+  U = covdata$U
+  S = covdata$S
+  C = covdata$Cn
+  Y = covdata$Y
+  N = nrow(U)
+  zerovect_new <- matrix(0,1,40)
+  gphi=zerovect_new
+  gth=zerovect_new
+  n = nrow(qmean)
+  T_col = ncol(qmean)
+  stp = 8
+  t = eigdir
+  Unew = U[,t]
+  sigma = diag(S)
+  theta = pi/2
+  if(n==2){
+    R = pracma::eye(2)
+  }else if(n==3){
+    R = pracma::eye(2)
+  }
+  
+  
+  dx = 100.05
+  dy = 100.05
+  stp = 8
+  ctr = 1
+  N = 10
+  delta = 2
+  epsilon_array = list()
+  epsilon_array[1] = 0
+  Xtemp = list()
+  for(epsilon in seq(-1*delta,delta,2*delta/N)){
+    epsilon_array[ctr] = epsilon
+    gphi = epsilon*sqrt(sigma[eigdir])*t(U[,eigdir])
+    final_alpha_t = matrix(0,n,T_col)
+    for (i in 1:length(Y)){
+      final_alpha_t = final_alpha_t +gphi[i] * Y[[i]]
+    }
+    temp_temp = geodesic_flow(qmean,final_alpha_t,stp)
+    qfinal = temp_temp[1]
+    qfinal = qfinal[[1]]
+    alpha_final = temp_temp[2]
+    if(is.null(ncol(qfinal))){
+      
+      Xtemp[[ctr]] = matrix(0,2,100)
+      ctr = ctr+1
+    }else{
+      Xtemp[[ctr]] = q_to_curve(R%*%qfinal)
+      ctr = ctr+1
+    }
+    
+  }
+  return(Xtemp)
+}
+
+
+
+
 display_eigen_and_original_shapes_along_extremes <- function(X,qmean,alpha_t_array,covdata,eigdir,fignum){
   U = covdata$U
   S = covdata$S
@@ -139,11 +227,12 @@ display_eigen_and_original_shapes_along_extremes <- function(X,qmean,alpha_t_arr
 #' @param pathname location of the file
 #' @param alpha_t_array list of tangent vectors from the mean shape
 #' @export
-plot_pca_variation <- function(alpha_t_array, qmean, qarray){
+plot_pca_variation <- function(alpha_t_array, qmean, qarray, eigdir){
   cat('Building TPCA model ...')
   covdata = build_tpca_model_from_mean(qmean,alpha_t_array)
   cat('done.\n')
-  display_eigen_and_original_shapes_along_extremes(X,qmean,alpha_t_array,covdata,1,8)
+  plot_eigenshapes(qmean, alpha_t_array, covdata, eigdir)
+  # display_eigen_and_original_shapes_along_extremes(X,qmean,alpha_t_array,covdata,1,8)
 }
 
 
@@ -288,7 +377,7 @@ plot_dendrogram <- function(geo_dist, color_code_path_name){
   plot(D.clust, xlab = '', main='Dwarf Morphometric Placement', sub='', ylab='')
 }
 
-pcaplot <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), titletxt = "") {
+plotpca <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), titletxt = "") {
   Taxoncolorcodes <- readr::read_csv(colorpath,col_names = TRUE)
   filenames <- Taxoncolorcodes$specimen_ID
   color_code <- Taxoncolorcodes$color
