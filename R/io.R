@@ -116,11 +116,13 @@ read_svg_file <- function(file_path, N = 100, r = 10){
 
 #' Read shape coordinates from ucf files
 #' @param file_path location of ucf files
+#' @param ndim number of dimensions to read. A ucf file can contain multidimensional curves
 #' @return list of coordinates of shape
 #' @export
-read_ucf_multiple_levels <- function(filepath){
+read_ucf_multiple_levels <- function(filepath, ndim = 2){
   fid <- file(filepath, "r")
   file_content <- readLines(fid)
+  close(fid)  
   j = 1
   num_levels = NULL
   while(j<=length(file_content)){
@@ -149,9 +151,13 @@ read_ucf_multiple_levels <- function(filepath){
     }
     
     Xtemp <- t(matrix(unlist(Xtemp),3,N))
-    X[[i]] = Xtemp
+    Xtemp <- Xtemp[, 1:ndim]
+    X[[i]] = t(Xtemp)
   }
-  close(fid)
+  if (num_levels == 1) {
+    X <- X[[i]]
+  }
+
   return (X)
   
 }
@@ -168,7 +174,7 @@ main_closed <- function(path){
       i = i+1
     }else{
       Xtemp = read_svg_file(fname)
-      X[[i]] = t(Xtemp[,1:2])
+      X[[i]] <- t(Xtemp[,1:2])
       i = i+1
     }
     
@@ -187,7 +193,7 @@ main_closed <- function(path){
 }
 
 #' @export
-read_curve <- function(curve_file) {
+read_curve <- function(curve_file, ndim=2) {
   if (! file.exists(curve_file) ) {
     stop(sprintf('Curve file %s does not exist.', curve_file), call. = FALSE)
   }
@@ -195,7 +201,7 @@ read_curve <- function(curve_file) {
   ext <- tools::file_ext(curve_file)
   switch(ext,
          "svg" = {return( read_svg_file(curve_file) )},
-         "ucf" = {return( read_ucf_multiple_levels(curve_file) )}
+         "ucf" = {return( read_ucf_multiple_levels(curve_file, ndim = ndim) )}
          )
 }
 
