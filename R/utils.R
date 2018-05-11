@@ -216,6 +216,28 @@ save_eigen_projections <- function(covdata,alpha_t_array,eigendirs,filename){
   return(data_to_write)
 }
 
+#' Get the eigen projections of the pca
+#' @param covdata list of covariance matrix, eigen values returned from \code{\link{compute_covariance}}
+#' @param alpha_t_array list of tangent vectors from the mean shape
+#' @param eigendirs the principal eigen directions
+#' @return csv of eigen projections
+#' @export
+get_eigen_projections <- function(covdata,alpha_t_array,eigendirs){
+  eigproj = list()
+  name = c()
+  for(i in 1:length(eigendirs)){
+    eigproj[[i]] = rep(0,length(alpha_t_array))
+    name <- c(name,sprintf('eig%d',i))    
+  }
+  names(eigproj) <- name  
+  for(i in 1:length(alpha_t_array)){
+    for(ctr in 1:length(eigendirs)){
+      temp_ptb <- project_to_basis(alpha_t_array[i],covdata$Y)
+      eigproj[[ctr]][i] = temp_ptb[[2]]%*%covdata$U[,eigendirs[ctr]]
+    }
+  }
+  return(eigproj)
+}
 
 #' Build TPCA model from mean shape
 #' @param qmean matrix containing the mean shape
