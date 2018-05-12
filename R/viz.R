@@ -251,32 +251,45 @@ plot_curve_list <- function(X,  color_code = c(), vertical = T, titletxt="") {
 }
 
 
-mdsplot <- function(alpha_t_array, geo_dis, X, color_code_path_name){
+mdsplot <- function(alpha_t_array, geo_dis, X, color_code_path_name, titletxt ="MDS scatter plot"){
   
   
-  Taxoncolorcodes <- read.csv(color_code_path_name, header = F, stringsAsFactors = FALSE)
-  filenames <- Taxoncolorcodes[,1]
-  color_code <- Taxoncolorcodes[,3]
+  Taxoncolorcodes <- readr::read_csv(color_code_path_name,col_names = TRUE)
+  filenames <- Taxoncolorcodes$specimen_ID
+  color_code <- Taxoncolorcodes$color
   geo_dis <- as.vector(unlist(geo_dis))
   distance_matrix <- pracma::squareform(geo_dis)
   example_NMDS=vegan::metaMDS(distance_matrix,k=2,trymax=200)
   Y = example_NMDS$points
   theta = pi
   R = pracma::eye(2)
+  class_color_code <- data.frame(label=levels(factor(Taxoncolorcodes$class)), 
+                                 colors = RColorBrewer::brewer.pal(nlevels(factor(Taxoncolorcodes$class)), name = "Set1"))
+  class_color_map <- match(Taxoncolorcodes$class, class_color_code$label)
   L = 0.08
-  labels = list()
-  plot(c(min(Y[,1]),max(Y[,1])),c(min(-Y[,2]),max(-Y[,2])), type="n", xlab="X",ylab="Y", main = "MDS scatter plot including Dwarf") 
-  for(i in 1:ncol(distance_matrix)){
-    #Modification
+  i = 1
+  xpos = Y[i,1]
+  ypos = -Y[i,2]
+  zpos = 0
+  pfinal = repose_curve(q_to_curve(curve_to_q(X[[i]])),0.12,R,c(xpos,ypos,0))
+  df <- data.frame(x = pfinal[1, ], y = pfinal[2,])
+  df2 <- data.frame(labelname = filenames[i], x = xpos, y = ypos)
+  p <- ggplot2::ggplot(df, ggplot2::aes(x , y) ) + ggplot2::geom_path(data = df, color = as.character(class_color_code$colors[class_color_map[i]]), size=1) + 
+    ggplot2::annotate("text", x = xpos, y = ypos, label = filenames[i], size = 2, fontface = 2)
+  for(i in 2:ncol(distance_matrix)){
     xpos = Y[i,1]
     ypos = -Y[i,2]
     zpos = 0
-    labels[[i]] = filenames[[i]]
     pfinal = repose_curve(q_to_curve(curve_to_q(X[[i]])),0.12,R,c(xpos,ypos,0))
-    plot_curve(pfinal,color_code[i],l = TRUE)
-    text(xpos, ypos, labels = filenames[i],cex=0.5)
+    df <- data.frame(x = pfinal[1, ], y = pfinal[2,])
+    df2 <- data.frame(labelname = filenames[i], x = xpos, y = ypos)
+    p <- p+ggplot2::geom_path(data = df, color = as.character(class_color_code$colors[class_color_map[i]]), size=1) + 
+      ggplot2::annotate("text", x = xpos, y = ypos, label = filenames[i], size = 2, fontface = 2)
   }
-  
+  p <- p + ggplot2::coord_fixed() + ggplot2::scale_y_reverse() +
+    ggplot2::labs(x = 'X', y = 'Y') + 
+    ggplot2::ggtitle(titletxt) + ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) + ggplot_set_axis()
+  return(p)
 }
 
 #Modification
@@ -384,10 +397,11 @@ deformation_field_all <- function(alpha_t_array, pmean, qmean,X){
 
 plot_dendrogram <- function(geo_dist, color_code_path_name){
   geo_dist = unlist(geo_dist)
-  Taxoncolorcodes <- read.csv(color_code_path_name, header = F, stringsAsFactors = FALSE)
-  
+  Taxoncolorcodes <- readr::read_csv(color_code_path_name,col_names = TRUE)
+  filenames <- Taxoncolorcodes$specimen_ID
+  color_code <- Taxoncolorcodes$color
   D.clust <- hclust(as.dist(pracma::squareform(geo_dist)),method="average")
-  D.clust$labels <- Taxoncolorcodes$V1
+  D.clust$labels <- filenames
   plot(D.clust, xlab = '', main='Dwarf Morphometric Placement', sub='', ylab='')
 }
 
@@ -411,7 +425,7 @@ plotpca <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), t
   df <- data.frame(x = pfinal[1, ], y = pfinal[2,])
   df2 <- data.frame(labelname = filenames[ii], x = xpos, y = ypos)
   p <- ggplot2::ggplot(df, ggplot2::aes(x , y) ) + ggplot2::geom_path(size = 1, color = as.character(class_color_code$colors[class_color_map[ii]])) +
-    annotate("text", x = xpos, y = ypos, label = filenames[ii], size = 3, fontface = 2)
+    ggplot2::annotate("text", x = xpos, y = ypos, label = filenames[ii], size = 3, fontface = 2)
 
   for (ii in 2:length(eigproj_landmarks$eig1)) {
     xpos = eigproj_landmarks[[ eigdir[1] ]][ii]
@@ -421,7 +435,7 @@ plotpca <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), t
     df <- data.frame(x = pfinal[1, ], y = pfinal[2,])
     df2 <- data.frame(labelname = filenames[ii], x = xpos, y = ypos)
     p <- p + ggplot2::geom_path(data = df, color = as.character(class_color_code$colors[class_color_map[ii]]), size=1) + 
-      annotate("text", x = xpos, y = ypos, label = filenames[ii], size = 2, fontface = 2)
+      ggplot2::annotate("text", x = xpos, y = ypos, label = filenames[ii], size = 2, fontface = 2)
   }
   p <- p + ggplot2::coord_fixed() + ggplot2::scale_y_reverse() +
         ggplot2::labs(x = sprintf('Eigen axis %d', eigdir[1]), y = sprintf('Eigen axis %d', eigdir[2])) + 
@@ -549,11 +563,11 @@ ggplot_axis_off <- function() {
 ggplot_set_axis <- function() {
   return(
     ggplot2::theme(
-      plot.title = ggplot2::element_text(size = rel(2)),
-      axis.text.x = ggplot2::element_text(size = rel(1)),
-      axis.text.y = ggplot2::element_text(size = rel(1)),
-      axis.title.x = ggplot2::element_text(size = rel(2)),
-      axis.title.y = ggplot2::element_text(size = rel(2))
+      plot.title = ggplot2::element_text(size = ggplot2::rel(2)),
+      axis.text.x = ggplot2::element_text(size = ggplot2::rel(1)),
+      axis.text.y = ggplot2::element_text(size = ggplot2::rel(1)),
+      axis.title.x = ggplot2::element_text(size = ggplot2::rel(2)),
+      axis.title.y = ggplot2::element_text(size = ggplot2::rel(2))
       )
   )
 

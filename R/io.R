@@ -170,7 +170,7 @@ main_closed <- function(path){
     fname <- fid[i]
     if(stringr::str_detect(fname,"\\.ucf")){
       Xtemp = read_ucf_multiple_levels(fname)
-      X[[i]] = t(Xtemp[[1]][,1:2])
+      X[[i]] = Xtemp[1:2,]
       i = i+1
     }else{
       Xtemp = read_svg_file(fname)
