@@ -67,35 +67,13 @@ get_plot_output_list <- function(max_plots, input_n, X, filenames) {
 }
 
 
-plot_eigenshapes <- function(qmean, alpha_t_array, covdata, eigdir) {
+plot_eigenshapes <- function(qmean, alpha_t_array, covdata, eigdir, dt = 0.15) {
   
-   X <- get_eigenshapes(qmean, alpha_t_array, covdata, eigdir)
-   dt = 0.15
-   n = nrow(qmean)
-   T_col = ncol(qmean)
-   
-   if(n==2){
-     R = pracma::eye(2)
-   }else if(n==3){
-     R = pracma::eye(2)
-   }
-   
-   epsilon_array = list()
-   epsilon_array[1] = 0
-   
-   plot(c(-1,1),c(0,2), type="n", main = paste("Shape variation along Eigen-axis",eigdir)) 
-   for(i in 1:length(X)){
-     pfinal = repose_curve(X[[i]],1,R,c(0,i*dt,i*dt))
-     if(epsilon_array[[i]] == 0){
-       plot_curve(pfinal,'r',l = TRUE)
-     }else{
-       plot_curve(pfinal,'b',l = TRUE)
-     }
-   }
-   
+   X <- get_eigenshapes(qmean, alpha_t_array, covdata, eigdir, dt)
+   plot_curve_list(X$X, color_code = X$color_code, titletxt = paste("Eigen shape variation along ",eigdir)) 
 }
 
-get_eigenshapes <- function(qmean, alpha_t_array, covdata, eigdir) {
+get_eigenshapes <- function(qmean, alpha_t_array, covdata, eigdir, dt = 0.15) {
 
   U = covdata$U
   S = covdata$S
@@ -149,7 +127,17 @@ get_eigenshapes <- function(qmean, alpha_t_array, covdata, eigdir) {
     }
     
   }
-  return(Xtemp)
+
+  X <- list()
+  color_code <- c()
+  for(i in 1:length(Xtemp)){
+    X[[i]] <- repose_curve(Xtemp[[i]],1,R,c(0,i*dt,i*dt))
+    color_code[i] <- "blue"
+    if(epsilon_array[[i]] == 0){
+      color_code[i] <- "red"
+    }
+  }
+  return(list(X=X, color_code=color_code))
 }
 
 
@@ -227,14 +215,40 @@ display_eigen_and_original_shapes_along_extremes <- function(X,qmean,alpha_t_arr
 #' @param pathname location of the file
 #' @param alpha_t_array list of tangent vectors from the mean shape
 #' @export
-plot_pca_variation <- function(alpha_t_array, qmean, qarray, eigdir){
+plot_pca_variation <- function(alpha_t_array, qmean, qarray, eigdir, dt = 0.15){
   cat('Building TPCA model ...')
   covdata = build_tpca_model_from_mean(qmean,alpha_t_array)
   cat('done.\n')
-  plot_eigenshapes(qmean, alpha_t_array, covdata, eigdir)
+  plot_eigenshapes(qmean, alpha_t_array, covdata, eigdir, dt = dt)
   # display_eigen_and_original_shapes_along_extremes(X,qmean,alpha_t_array,covdata,1,8)
 }
 
+plot_curve_list <- function(X,  color_code = c(), vertical = T, titletxt="") {
+
+  n <- nrow(X[[1]])
+  N <- length(X)
+  if (length(color_code) == 0){
+    color_code = rep('blue', N)
+  }
+  
+  if(n==2){
+    R = pracma::eye(2)
+  }else if(n==3){
+    R = pracma::eye(2)
+  }
+  
+  ii <- 1
+  df <- data.frame(x = X[[ii]][1, ], y = X[[ii]][2, ])
+  p <- ggplot2::ggplot(df, ggplot2::aes(x , y) ) + ggplot2::geom_path(size = 1, color = color_code[ii]) 
+  for (ii in 2:N) {
+    df <- data.frame(x = X[[ii]][1, ], y = X[[ii]][2, ])
+    p <- p + ggplot2::geom_path(data = df, color = color_code[ii], size=1)
+  }
+  p <- p + ggplot2::coord_fixed() + ggplot2::scale_y_reverse()+  ggplot_axis_off() + 
+    ggplot2::labs(title=titletxt) + ggplot2::theme(title = ggplot2::element_text(size = ggplot2::rel(1))) 
+  
+  return(p)
+}
 
 
 mdsplot <- function(alpha_t_array, geo_dis, X, color_code_path_name){
@@ -412,7 +426,6 @@ plotpca <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), t
   p <- p + ggplot2::coord_fixed() + ggplot2::scale_y_reverse() +
         ggplot2::labs(x = sprintf('Eigen axis %d', eigdir[1]), y = sprintf('Eigen axis %d', eigdir[2])) + 
         ggplot2::ggtitle(titletxt) + ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) + ggplot_set_axis()
-    
   return(p)  
   
 }
