@@ -180,6 +180,7 @@ server <- function(input, output) {
   
   output$dendogram_plot <- renderPlot({
     req(input$dendogram_plotButton)
+    req(input$goButton)
     req(input$Color_File)
     progress <- shiny::Progress$new()
     on.exit(progress$close())
