@@ -13,8 +13,10 @@ ui <- fluidPage(
       fileInput("file1", "Choose a ucf or svg file list",
                 multiple = FALSE,
                 accept = c("text/plain")),
-      textInput("Color_File", label = p("Color File"), value = "Used to plot curves"),
-      actionButton("file_ready", "Done"),
+      fileInput("Color_File", "Choose a csv file to plot curves",
+                multiple = FALSE,
+                accept = c("csv")),
+      textOutput("contents"),
       tags$hr(),
       selectInput("var", 
                   label = "What kind of curve?",
@@ -41,15 +43,14 @@ ui <- fluidPage(
       
       # Output: Data file ----
       titlePanel("Shape Analysis"),
-      fluidRow(
-        column(3,uiOutput("plots")),
-        column(9,plotly::plotlyOutput("geo_dist", width = "100%", height="600px"),
-               plotOutput("mean_shape"),
-               plotOutput("PCA_plot"),
-               plotOutput("mds_plot"),
-               plotOutput("dendogram_plot"),
-               plotOutput("dfa_plot"))
-      )
+      plotOutput("plots"),
+      plotly::plotlyOutput("geo_dist", width = "100%", height="600px"),
+      plotOutput("mean_shape"),
+      plotOutput("PCA_plot"),
+      plotOutput("mds_plot"),
+      plotOutput("dendogram_plot"),
+      plotOutput("dfa_plot")
+
       #plotly::plotlyOutput("geo_dist", width = "100%", height="600px"),
       #plotOutput("mean_shape"),
       #plotOutput("PCA_plot"),

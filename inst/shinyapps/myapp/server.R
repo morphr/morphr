@@ -5,11 +5,11 @@ server <- function(input, output) {
   
   output$contents <- renderText({
     req(input$file1)
+    req(input$Color_File)
     
     
-    fid = read.table(input$file1$datapath, stringsAsFactors = FALSE)[[1]]
     
-    return("File successfully uploaded")
+    return("Files successfully uploaded")
     
     
   })
@@ -22,6 +22,7 @@ server <- function(input, output) {
   output$mean_shape <- renderPlot({
     req(input$Mean_shape_plotButton)
     req(input$file1)
+    req(input$Color_File)
     req(input$var)
     progress <- shiny::Progress$new()
     on.exit(progress$close())
@@ -59,9 +60,9 @@ server <- function(input, output) {
   
   output$geo_dist <- plotly::renderPlotly({
     req(input$file1)
+    req(input$Color_File)
     req(input$var)
     req(input$goButton)
-    req(input$file_ready)
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Calculating distances", value = 1)
@@ -86,7 +87,7 @@ server <- function(input, output) {
       }
     }
     rc_name <- c()
-    Taxoncolorcodes <- readr::read_csv(input$Color_File,col_names = FALSE)
+    Taxoncolorcodes <- readr::read_csv(input$Color_File$datapath,col_names = FALSE)
     filenames <- Taxoncolorcodes$X1
     for(i in 1:length(X)){
       rc_name <- c(rc_name,filenames[i])
@@ -100,12 +101,26 @@ server <- function(input, output) {
   observe({
     
     req(input$file1)
-    req(input$file_ready)
+    req(input$Color_File)
     #req(input$var == "Original Curves")
     X = main_closed(input$file1$datapath)
-    Taxoncolorcodes <- readr::read_csv(input$Color_File,col_names = FALSE)
-    filenames <- Taxoncolorcodes$X1
-    output$plots <- renderUI({ get_plot_output_list(length(X),length(X),X, filenames) })
+    Taxoncolorcodes <- readr::read_csv(input$Color_File$datapath,col_names = TRUE)
+    filenames <- Taxoncolorcodes$specimen_ID
+    color_code <- Taxoncolorcodes$color
+    output$plots <- renderPlot({
+      if(length(X)<=8){
+        par(mfrow=c(1,length(X)))
+        par(mar=c(1,1,1,1))
+      }else{
+        rr <- ceiling(length(X)/8)
+        par(mfrow=c(rr,8))
+        par(mar=c(1,1,1,1))
+      }
+      for(i in 1:length(X)){
+        plot_curve(X[[i]],color_code[i], filename = filenames[i])
+      }
+    }
+    )
   })
   
   
@@ -116,7 +131,7 @@ server <- function(input, output) {
   
   output$PCA_plot <- renderPlot({
     req(input$PCA_plotButton)
-    req(input$file_ready)
+    req(input$Color_File)
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Making PCA plot", value = 1)
@@ -126,7 +141,8 @@ server <- function(input, output) {
       qarray[[i]] = curve_to_q(X[[i]])
     }
     temp_all_mean_shape = readRDS(file = "all_mean_shape.rds")
-    PCA_plot(temp_all_mean_shape[[3]],temp_all_mean_shape[[1]] , qarray, input$Color_File)
+    plotpca(temp_all_mean_shape$qmean, temp_all_mean_shape$alpha_t_array, qarray,
+            input$Color_File$datapath, eigdir = c(1, 2), titletxt = "PCA Plot")
     
     
     
@@ -138,8 +154,9 @@ server <- function(input, output) {
   
   
   output$mds_plot <- renderPlot({
+    req(input$goButton)
     req(input$mds_plotButton)
-    req(input$file_ready)
+    req(input$Color_File)
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Making MDS plot", value = 1)
@@ -150,7 +167,8 @@ server <- function(input, output) {
     }
     temp_all = readRDS(file = "all_geodsic.rds")
     temp_all_mean_shape = readRDS(file = "all_mean_shape.rds")
-    mdsplot(temp_all_mean_shape[[3]], temp_all[[6]], X, input$Color_File)
+    mdsplot(temp_all$alpha_t, temp_all$geo_dist,X,input$Color_File$datapath )
+
     
     
     
@@ -162,7 +180,7 @@ server <- function(input, output) {
   
   output$dendogram_plot <- renderPlot({
     req(input$dendogram_plotButton)
-    req(input$file_ready)
+    req(input$Color_File)
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Making Dendogram", value = 1)
@@ -173,14 +191,14 @@ server <- function(input, output) {
     }
     temp_all = readRDS(file = "all_geodsic.rds")
     geo_dist = temp_all[[6]]
-    plot_dendrogram(geo_dist, input$Color_File)
+    plot_dendrogram(geo_dist, input$Color_File$datapath)
   })
   
   
   
   output$dfa_plot <- renderPlot({
     req(input$dfa)
-    req(input$file_ready)
+    req(input$Color_File)
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Making Deformation Field Plot", value = 1)
