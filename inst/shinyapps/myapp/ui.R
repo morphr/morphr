@@ -45,10 +45,10 @@ ui <- fluidPage(
       titlePanel("Shape Analysis"),
       plotOutput("plots"),
       plotly::plotlyOutput("geo_dist", width = "100%", height="600px"),
-      plotOutput("mean_shape"),
-      plotOutput("PCA_plot"),
-      plotOutput("mds_plot"),
-      plotOutput("dendogram_plot"),
+      plotOutput("mean_shape",width = "100%", height="600px"),
+      plotOutput("PCA_plot",width = "100%", height="600px"),
+      plotOutput("mds_plot",width = "100%", height="600px"),
+      plotOutput("dendogram_plot",width = "100%", height="600px"),
       plotOutput("dfa_plot")
 
       #plotly::plotlyOutput("geo_dist", width = "100%", height="600px"),
