@@ -130,6 +130,7 @@ server <- function(input, output) {
   
   
   output$PCA_plot <- renderPlot({
+    req(input$Mean_shape_plotButton)
     req(input$PCA_plotButton)
     req(input$Color_File)
     progress <- shiny::Progress$new()
@@ -154,6 +155,7 @@ server <- function(input, output) {
   
   
   output$mds_plot <- renderPlot({
+    req(input$Mean_shape_plotButton)
     req(input$goButton)
     req(input$mds_plotButton)
     req(input$Color_File)
@@ -198,6 +200,7 @@ server <- function(input, output) {
   
   
   output$dfa_plot <- renderPlot({
+    req(input$Mean_shape_plotButton)
     req(input$dfa)
     req(input$Color_File)
     progress <- shiny::Progress$new()
