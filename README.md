@@ -96,10 +96,3 @@ plot_dendrogram(geo_dist, color_file_path)
 deformation_field_all(alpha_t_array, pmean, qmean,X)
 ```
 <img src=https://github.com/morphr/morphr/raw/master/assets/images/Deformation_Field.png width=50% />
-
-* R Shiny Demonstration
-```{r}
-library(morphr)
-run_shiny()
-```
-<img src=https://github.com/morphr/morphr/raw/master/assets/images/R_Shiny_Demonstration.png>

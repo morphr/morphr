@@ -61,7 +61,7 @@
 <div id="morphr-c-2018" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#morphr-c-2018" class="anchor"></a>Morphr (c) 2018</h1></div>
-<p><strong>Morphr</strong> implements standard techniques for the representation of shapes, calculation of mean templates, statistical analysis (clustering, principal component analysis (PCA) and estimating deformations to mean shapes) and accepts case studies for medical, anatomical, and paleontological shape data. The package also implements convenient graphical user interface built using R shiny, allowing people with limited coding experience to conduct shape analysis case studies easily.</p>
+<p><a href="https://github.com/morphr/morphr"><strong>Morphr</strong></a> implements standard techniques for the representation of shapes, calculation of mean templates, statistical analysis (clustering, principal component analysis (PCA) and estimating deformations to mean shapes) and accepts case studies for medical, anatomical, and paleontological shape data. The package also implements convenient graphical user interface built using R shiny, allowing people with limited coding experience to conduct shape analysis case studies easily.</p>
 <p>The idea behind <strong>Morphr</strong> is not only to provide tools for analysis of continuous shapes and curves, but also a set of integrated functionalities that can be used by morphologist with limited coding experience to conduct shape analysis case studies easily. The package also utilizes ideas and functions from elastic functional data analysis pacakge: <a href="https://cran.r-project.org/web/packages/fdasrvf/index.html"><strong>fdasrvf</strong></a>.</p>
 <div id="installation" class="section level3">
 <h3 class="hasAnchor">
@@ -146,12 +146,6 @@ PCA_plot(alpha_t_array, qmean, qarray, color_file_path)</code></pre>
 <p>Deformation Field</p>
 <pre class="{r}"><code>deformation_field_all(alpha_t_array, pmean, qmean,X)</code></pre>
 <p><img src="https://github.com/morphr/morphr/raw/master/assets/images/Deformation_Field.png" width="50%"></p>
-</li>
-<li>
-<p>R Shiny Demonstration</p>
-<pre class="{r}"><code>library(morphr)
-run_shiny()</code></pre>
-<p><img src="https://github.com/morphr/morphr/raw/master/assets/images/R_Shiny_Demonstration.png"></p>
 </li>
 </ul>
 </div>

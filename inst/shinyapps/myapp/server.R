@@ -49,7 +49,7 @@ server <- function(input, output) {
       sum_sq_dist = temp_all_mean_shape[[6]]
       qmean_new = project_curve(qmean)
       pmean = q_to_curve(qmean_new)
-      plot_curve(pmean,'r', l = FALSE, filename = "Mean Shape")
+      plot_curve(pmean,'blue', l = FALSE, filename = "Mean Shape")
     }
     
   })
@@ -107,6 +107,10 @@ server <- function(input, output) {
     Taxoncolorcodes <- readr::read_csv(input$Color_File$datapath,col_names = TRUE)
     filenames <- Taxoncolorcodes$specimen_ID
     color_code <- Taxoncolorcodes$color
+    class_color_code <- data.frame(label=levels(factor(Taxoncolorcodes$class)), 
+                                   colors = colorRampPalette(RColorBrewer::brewer.pal(9, name = "Set1"))(nlevels(factor(Taxoncolorcodes$class))))
+    
+    class_color_map <- match(Taxoncolorcodes$class, class_color_code$label)
     output$plots <- renderPlot({
       if(length(X)<=8){
         par(mfrow=c(1,length(X)))
@@ -117,7 +121,7 @@ server <- function(input, output) {
         par(mar=c(1,1,1,1))
       }
       for(i in 1:length(X)){
-        plot_curve(X[[i]],color_code[i], filename = filenames[i])
+        plot_curve(X[[i]],as.character(class_color_code$colors[class_color_map[i]]), filename = filenames[i])
       }
     }
     )
@@ -216,6 +220,26 @@ server <- function(input, output) {
     alpha_t_array = temp_all_mean_shape[[3]]
     pmean = q_to_curve(project_curve(qmean))
     deformation_field_all(alpha_t_array, pmean, qmean,X)
+    
+    
+    
+  })
+  
+  output$PCA_variation_plot <- renderPlot({
+    req(input$Mean_shape_plotButton)
+    req(input$PCA_variation_plotButton)
+    req(input$Color_File)
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message = "Making PCA Variation Plot", value = 1)
+    X = main_closed(input$file1$datapath)
+    qarray = list()
+    for(i in 1:length(X)){
+      qarray[[i]] = curve_to_q(X[[i]])
+    }
+    temp_all_mean_shape = readRDS(file = "all_mean_shape.rds")
+    plot_pca_variation(temp_all_mean_shape$alpha_t_array, temp_all_mean_shape$qmean, eigdir = 1,qarray, dt = 0)
+    
     
     
     

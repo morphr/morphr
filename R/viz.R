@@ -4,35 +4,22 @@
 #' @param l Default value is False, which means returning a plot
 #' @export
 plot_curve <- function(p, colorstr, l = FALSE, filename = ''){
-  colorval <- NULL
-  if(colorstr == 'k'){
-    colorval = "black"
-  }else if(colorstr == 'b'){
-    colorval = "blue"
-  }else if(colorstr == 'r'){
-    colorval = "red"
-  }else if(colorstr == 'm'){
-    colorval = "magenta"
-  }else if(colorstr == 'g'){
-    colorval = "green"
-  }else{
-    colorval = "black"
-  }
+
   styleval <- '-'
   n = nrow(p)
   T_col = ncol(p)
   if(n == 2){
     if (l == TRUE){
-      lines(p[1,],p[2,],type = "l",col = colorval,lwd=1)
+      lines(p[1,],p[2,],type = "l",col = colorstr,lwd=3)
     }else{
-      plot(p[1,],p[2,],type = "l",col = colorval,lwd=1,axes=FALSE, xlab = '', ylab = '', main = filename )
+      plot(p[1,],p[2,],type = "l",col = colorstr,lwd=3,axes=FALSE, xlab = '', ylab = '', main = filename )
     }
   }
   if(n == 3){
     if (l == TRUE){
-      lines(p[1,],p[2,],type = "l",col = colorval,lwd=1)
+      lines(p[1,],p[2,],type = "l",col = colorstr,lwd=3)
     }else{
-      plot(p[1,],p[2,],type = "l",col = colorval,lwd=1,axes=FALSE, xlab = '', ylab = '', main = filename )
+      plot(p[1,],p[2,],type = "l",col = colorstr,lwd=3,axes=FALSE, xlab = '', ylab = '', main = filename )
     }
     for (i in 1:T_col){
       text(p[1,i],p[2,i],toString(i),cex = 1)
@@ -245,8 +232,7 @@ plot_curve_list <- function(X,  color_code = c(), vertical = T, titletxt="") {
     p <- p + ggplot2::geom_path(data = df, color = color_code[ii], size=1)
   }
   p <- p + ggplot2::coord_fixed() + ggplot2::scale_y_reverse()+  ggplot_axis_off() + 
-    ggplot2::labs(title=titletxt) + ggplot2::theme(title = ggplot2::element_text(size = ggplot2::rel(1))) 
-  
+    ggplot2::ggtitle(titletxt) + ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) + ggplot_set_axis()
   return(p)
 }
 
@@ -256,7 +242,6 @@ mdsplot <- function(alpha_t_array, geo_dis, X, color_code_path_name, titletxt ="
   
   Taxoncolorcodes <- readr::read_csv(color_code_path_name,col_names = TRUE)
   filenames <- Taxoncolorcodes$specimen_ID
-  color_code <- Taxoncolorcodes$color
   geo_dis <- as.vector(unlist(geo_dis))
   distance_matrix <- pracma::squareform(geo_dis)
   example_NMDS=vegan::metaMDS(distance_matrix,k=2,trymax=200)
@@ -400,12 +385,17 @@ plot_dendrogram <- function(geo_dist, color_code_path_name){
   geo_dist = unlist(geo_dist)
   Taxoncolorcodes <- readr::read_csv(color_code_path_name,col_names = TRUE)
   filenames <- Taxoncolorcodes$specimen_ID
-  color_code <- Taxoncolorcodes$color
+  class_color_code <- data.frame(label=levels(factor(Taxoncolorcodes$class)), 
+                                 colors = colorRampPalette(RColorBrewer::brewer.pal(9, name = "Set1"))(nlevels(factor(Taxoncolorcodes$class))))
+  
+  class_color_map <- match(Taxoncolorcodes$class, class_color_code$label)
   D.clust <- hclust(as.dist(pracma::squareform(geo_dist)),method="average")
   D.clust$labels <- filenames
-  
-  plot(D.clust, xlab = '', main='Hierarchal Clustering', sub='', ylab='Geodesic Distance')
-  return(p)
+  #plot(D.clust, xlab = '', main='Clustering', sub='', ylab='')
+  #clus = cutree(D.clust, nlevels(factor(Taxoncolorcodes$class)))
+  #a = ape::as.phylo(D.clust)
+  #a$tip.color = as.character(class_color_code$colors[as.integer(factor(Taxoncolorcodes$class))])
+  ape::plot.phylo(ape::as.phylo(D.clust), tip.color =  as.character(class_color_code$colors[as.integer(factor(Taxoncolorcodes$class))]), cex = 0.7)
 }
 
 plotpca <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), titletxt = "") {
@@ -576,3 +566,4 @@ ggplot_set_axis <- function() {
   )
 
 }
+

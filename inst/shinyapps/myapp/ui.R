@@ -29,6 +29,8 @@ ui <- fluidPage(
       p("Click to get mean shape. Always get mean shape first"),
       actionButton("PCA_plotButton", "PCA"),
       p("Click to get PCA plot"),
+      actionButton("PCA_variation_plotButton", "PCA Variation"),
+      p("Click to get PCA variation along eigen axis 1"),
       actionButton("mds_plotButton", "MDS"),
       p("Click to get MDS plot"),
       actionButton("dendogram_plotButton", "Dendogram"),
@@ -42,22 +44,17 @@ ui <- fluidPage(
     mainPanel(
       
       # Output: Data file ----
-      titlePanel("Shape Analysis"),
+      titlePanel("Shape Analysis Using Square Root Velocity Function"),
       plotOutput("plots"),
       plotly::plotlyOutput("geo_dist", width = "100%", height="600px"),
       plotOutput("mean_shape",width = "100%", height="600px"),
       plotOutput("PCA_plot",width = "100%", height="600px"),
+      plotOutput("PCA_variation_plot",width = "100%", height="600px"),
       plotOutput("mds_plot",width = "100%", height="600px"),
       plotOutput("dendogram_plot",width = "100%", height="600px"),
-      plotOutput("dfa_plot")
+      plotOutput("dfa_plot",width = "100%", height="600px")
 
-      #plotly::plotlyOutput("geo_dist", width = "100%", height="600px"),
-      #plotOutput("mean_shape"),
-      #plotOutput("PCA_plot"),
-      #plotOutput("mds_plot"),
-      #plotOutput("dendogram_plot"),
-      #plotOutput("dfa_plot")
-      
+
       
       
       
