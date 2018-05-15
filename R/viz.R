@@ -264,7 +264,8 @@ mdsplot <- function(alpha_t_array, geo_dis, X, color_code_path_name, titletxt ="
   theta = pi
   R = pracma::eye(2)
   class_color_code <- data.frame(label=levels(factor(Taxoncolorcodes$class)), 
-                                 colors = RColorBrewer::brewer.pal(nlevels(factor(Taxoncolorcodes$class)), name = "Set1"))
+                                 colors = colorRampPalette(RColorBrewer::brewer.pal(9, name = "Set1"))(nlevels(factor(Taxoncolorcodes$class))))
+  
   class_color_map <- match(Taxoncolorcodes$class, class_color_code$label)
   L = 0.08
   i = 1
