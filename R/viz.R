@@ -271,7 +271,7 @@ mdsplot <- function(alpha_t_array, geo_dis, X, color_code_path_name, titletxt ="
   xpos = Y[i,1]
   ypos = -Y[i,2]
   zpos = 0
-  pfinal = repose_curve(q_to_curve(curve_to_q(X[[i]])),0.12,R,c(xpos,ypos,0))
+  pfinal = repose_curve(q_to_curve(curve_to_q(X[[i]])),0.2,R,c(xpos,ypos,0))
   df <- data.frame(x = pfinal[1, ], y = pfinal[2,])
   df2 <- data.frame(labelname = filenames[i], x = xpos, y = ypos)
   p <- ggplot2::ggplot(df, ggplot2::aes(x , y) ) + ggplot2::geom_path(data = df, color = as.character(class_color_code$colors[class_color_map[i]]), size=1) + 
@@ -280,7 +280,7 @@ mdsplot <- function(alpha_t_array, geo_dis, X, color_code_path_name, titletxt ="
     xpos = Y[i,1]
     ypos = -Y[i,2]
     zpos = 0
-    pfinal = repose_curve(q_to_curve(curve_to_q(X[[i]])),0.12,R,c(xpos,ypos,0))
+    pfinal = repose_curve(q_to_curve(curve_to_q(X[[i]])),0.2,R,c(xpos,ypos,0))
     df <- data.frame(x = pfinal[1, ], y = pfinal[2,])
     df2 <- data.frame(labelname = filenames[i], x = xpos, y = ypos)
     p <- p+ggplot2::geom_path(data = df, color = as.character(class_color_code$colors[class_color_map[i]]), size=1) + 
@@ -402,7 +402,9 @@ plot_dendrogram <- function(geo_dist, color_code_path_name){
   color_code <- Taxoncolorcodes$color
   D.clust <- hclust(as.dist(pracma::squareform(geo_dist)),method="average")
   D.clust$labels <- filenames
-  plot(D.clust, xlab = '', main='Hierarchal Clustering', sub='', ylab='')
+  
+  plot(D.clust, xlab = '', main='Hierarchal Clustering', sub='', ylab='Geodesic Distance')
+  return(p)
 }
 
 plotpca <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), titletxt = "") {
@@ -414,14 +416,15 @@ plotpca <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), t
   R = pracma::eye(2)
 
   class_color_code <- data.frame(label=levels(factor(Taxoncolorcodes$class)), 
-                                 colors = RColorBrewer::brewer.pal(nlevels(factor(Taxoncolorcodes$class)), name = "Set1"))
+                                 colors = colorRampPalette(RColorBrewer::brewer.pal(9, name = "Set1"))(nlevels(factor(Taxoncolorcodes$class))))
+  
   class_color_map <- match(Taxoncolorcodes$class, class_color_code$label)
   
   ii <- 1
   # color_code[ii] <- "red"
   xpos = eigproj_landmarks[[ eigdir[1] ]][ii]
   ypos = eigproj_landmarks[[ eigdir[2] ]][ii]
-  pfinal = repose_curve(q_to_curve(qarray[[ii]]),0.12,R,c(xpos,ypos,0))
+  pfinal = repose_curve(q_to_curve(qarray[[ii]]),0.2,R,c(xpos,ypos,0))
   df <- data.frame(x = pfinal[1, ], y = pfinal[2,])
   df2 <- data.frame(labelname = filenames[ii], x = xpos, y = ypos)
   p <- ggplot2::ggplot(df, ggplot2::aes(x , y) ) + ggplot2::geom_path(size = 1, color = as.character(class_color_code$colors[class_color_map[ii]])) +
@@ -431,7 +434,7 @@ plotpca <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), t
     xpos = eigproj_landmarks[[ eigdir[1] ]][ii]
     ypos = eigproj_landmarks[[ eigdir[2] ]][ii]
     # color_code[ii] <- "red"
-    pfinal = repose_curve(q_to_curve(qarray[[ii]]),0.12,R,c(xpos,ypos,0))
+    pfinal = repose_curve(q_to_curve(qarray[[ii]]),0.2,R,c(xpos,ypos,0))
     df <- data.frame(x = pfinal[1, ], y = pfinal[2,])
     df2 <- data.frame(labelname = filenames[ii], x = xpos, y = ypos)
     p <- p + ggplot2::geom_path(data = df, color = as.character(class_color_code$colors[class_color_map[ii]]), size=1) + 
@@ -456,7 +459,7 @@ PCA_plot <- function(alpha_t_array, qmean, qarray, colorpath){
   for(i in 1:length(eigproj_landmarks$`eig1`)){
     xpos = eigproj_landmarks[[1]][i]
     ypos = eigproj_landmarks[[2]][i]
-    pfinal = repose_curve(q_to_curve(qarray[[i]]),0.12,R,c(xpos,ypos,0))
+    pfinal = repose_curve(q_to_curve(qarray[[i]]),0.2,R,c(xpos,ypos,0))
     plot_curve(pfinal,color_code[i],l = TRUE)
     #print(c(xpos,ypos))
     #print(filenames[i+1])#depending on heading
