@@ -79,6 +79,12 @@ PCA_plot(alpha_t_array, qmean, qarray, color_file_path)
 ```
 <img src=https://github.com/morphr/morphr/raw/master/assets/images/PCA_Plot.png width=50% />
 
+* PCA Variation Along Eigen Axis 1
+```{r}
+plot_pca_variation(alpha_t_array, qmean, eigdir = 1,qarray, dt = 0)
+```
+<img src=https://github.com/morphr/morphr/raw/master/assets/images/PCA_Variation.png>
+
 * MDS Plot
 ```{r}
 mdsplot(alpha_t_array, geo_dist, X, color_file_path)
@@ -97,9 +103,3 @@ deformation_field_all(alpha_t_array, pmean, qmean,X)
 ```
 <img src=https://github.com/morphr/morphr/raw/master/assets/images/Deformation_Field.png width=50% />
 
-* R Shiny Demonstration
-```{r}
-library(morphr)
-run_shiny()
-```
-<img src=https://github.com/morphr/morphr/raw/master/assets/images/R_Shiny_Demonstration.png>
