@@ -83,7 +83,7 @@ PCA_plot(alpha_t_array, qmean, qarray, color_file_path)
 ```{r}
 plot_pca_variation(alpha_t_array, qmean, eigdir = 1,qarray, dt = 0)
 ```
-<img src=https://github.com/morphr/morphr/raw/master/assets/images/PCA_Variation.png>
+<img src=https://github.com/morphr/morphr/raw/master/assets/images/PCA_Variation.png width=50% />
 
 * MDS Plot
 ```{r}
