@@ -49,7 +49,7 @@ server <- function(input, output) {
       sum_sq_dist = temp_all_mean_shape[[6]]
       qmean_new = project_curve(qmean)
       pmean = q_to_curve(qmean_new)
-      plot_curve(pmean,'blue', l = FALSE, filename = "Mean Shape")
+      plot_curve(-pmean,'blue', l = FALSE, filename = "Mean Shape")
     }
     
   })

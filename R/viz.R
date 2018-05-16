@@ -10,16 +10,16 @@ plot_curve <- function(p, colorstr, l = FALSE, filename = ''){
   T_col = ncol(p)
   if(n == 2){
     if (l == TRUE){
-      lines(p[1,],p[2,],type = "l",col = colorstr,lwd=3)
+      lines(p[1,],p[2,],type = "l",col = colorstr,lwd=10)
     }else{
-      plot(p[1,],p[2,],type = "l",col = colorstr,lwd=3,axes=FALSE, xlab = '', ylab = '', main = filename )
+      plot(p[1,],p[2,],type = "l",col = colorstr,lwd=10,axes=FALSE, xlab = '', ylab = '', main = filename )
     }
   }
   if(n == 3){
     if (l == TRUE){
-      lines(p[1,],p[2,],type = "l",col = colorstr,lwd=3)
+      lines(p[1,],p[2,],type = "l",col = colorstr,lwd=10)
     }else{
-      plot(p[1,],p[2,],type = "l",col = colorstr,lwd=3,axes=FALSE, xlab = '', ylab = '', main = filename )
+      plot(p[1,],p[2,],type = "l",col = colorstr,lwd=10,axes=FALSE, xlab = '', ylab = '', main = filename )
     }
     for (i in 1:T_col){
       text(p[1,i],p[2,i],toString(i),cex = 1)
