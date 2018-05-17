@@ -1,7 +1,7 @@
 ui <- fluidPage(
   
   # App title ----
-  titlePanel("Uploading Files"),
+  titlePanel("Import Data"),
   
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
@@ -14,7 +14,7 @@ ui <- fluidPage(
       fileInput("file1", "Choose a ucf or svg file list",
                 multiple = FALSE,
                 accept = c("text/plain")),
-      fileInput("Color_File", "Choose a csv file to plot curves",
+      fileInput("Color_File", "Choose a demographics csv",
                 multiple = FALSE,
                 accept = c("csv")),
       textOutput("contents"),
