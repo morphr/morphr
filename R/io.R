@@ -206,5 +206,62 @@ read_curve <- function(curve_file, ndim=2) {
 }
 
 
+#' @export
+check_file_exists <- function(filename, raise_error=FALSE, errmesg=NULL) {
+  errmesg <- if (is.null(errmesg)) sprintf('File or path %s does not exist.', filename) else errmesg
+  if (!identical(filename, character(0))) {
+    if ( file.exists(filename) )
+      return(TRUE)
+    else {
+      if (raise_error)
+        stop(errmesg, call. = FALSE)
+      return(FALSE)
+    }
+  }
+  else {
+    if (raise_error)
+      stop(errmesg, call. = FALSE)
+    else
+      return(FALSE)
+  }
+}
 
+
+#' @export
+get_os <- function() {
+  if ( !is.null(Sys.info()) ) {
+    if(Sys.info()['sysname'] == 'Darwin')
+      return('macOS')
+  }
+  else if ( grepl("darwin", R.version$os) )
+    return('macOS')
+  
+  if (.Platform$OS.type == 'unix')
+    return('unix')
+  
+  if (.Platform$OS.type == 'windows')
+    return('windows')
+}
+
+
+#' @export
+get_ini_path <- function() {
+  ini_file <- system.file("extdata", "morphr.ini", package = 'morphr')
+  if (check_file_exists(ini_file, raise_error = TRUE)) return(ini_file) else return("")
+}
+
+#' @export
+get_dp_shape_match_path <- function() {
+  osname <- get_os()
+  
+  if (osname == "macOS") 
+    return(system.file('bin', 'DPShapeMatch', package = 'morphr'))
+    morphr_settings$path$dp_shape_match_path <- system.file('bin', 'DPShapeMatch', package = 'morphr')
+  
+  if (osname == "unix")
+    return(system.file('bin', 'DPShapeMatch_ubuntu_x86_64', package = 'morphr'))
+  
+
+
+}
 

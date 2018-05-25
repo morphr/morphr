@@ -393,8 +393,8 @@ initialize_gamma_using_dp <- function(q1,q2){
   qarray_temp[[1]] = q1
   qarray_temp[[2]] = q2
   save_q_shapes('DPshapedata_R.dat', qarray_temp)
-  
-  temp_str = paste(system.file('bin', 'DPShapeMatch', package = 'morphr'), ' DPshapedata_R.dat gamma_R.dat', sep = '')
+  dp_match_path <- get_dp_shape_match_path()
+  temp_str = paste(dp_match_path, ' DPshapedata_R.dat gamma_R.dat', sep = '')
   system(temp_str)
   gamma = load_gamma('gamma_R.dat')
   gamma = gamma/max(gamma)*2*pi
@@ -559,3 +559,4 @@ grad_gamma <- function(gamma,c){
   g[2:99] = gamma[3:100]-gamma[1:98]/(h[3:100]-h[1:98])
   return(g)
 }
+
