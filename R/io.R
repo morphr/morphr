@@ -119,7 +119,7 @@ read_svg_file <- function(file_path, N = 100, r = 10){
 #' @param ndim number of dimensions to read. A ucf file can contain multidimensional curves
 #' @return list of coordinates of shape
 #' @export
-read_ucf_multiple_levels <- function(filepath, ndim = 2){
+read_ucf_multiple_levels <- function(filepath, ndim){
   fid <- file(filepath, "r")
   file_content <- readLines(fid)
   close(fid)  
@@ -151,7 +151,7 @@ read_ucf_multiple_levels <- function(filepath, ndim = 2){
     }
     
     Xtemp <- t(matrix(unlist(Xtemp),3,N))
-    Xtemp <- Xtemp[, 1:ndim]
+    Xtemp <- Xtemp[, ndim]
     X[[i]] = t(Xtemp)
   }
   if (num_levels == 1) {

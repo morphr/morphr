@@ -10,16 +10,17 @@ plot_curve <- function(p, colorstr, l = FALSE, filename = ''){
   T_col = ncol(p)
   if(n == 2){
     if (l == TRUE){
-      lines(p[1,],p[2,],type = "l",col = colorstr,lwd=10)
+      lines(p[1,],p[2,],type = "l",col = colorstr,lwd=8)
     }else{
-      plot(p[1,],p[2,],type = "l",col = colorstr,lwd=10,axes=FALSE, xlab = '', ylab = '', main = filename )
+      #par(cex = 2)
+      plot(p[1,],p[2,],ylim = rev(range(p[2,])),type = "l",col = colorstr,lwd=4,axes=FALSE, xlab = '', ylab = '', main = filename, asp = 1)
     }
   }
   if(n == 3){
     if (l == TRUE){
-      lines(p[1,],p[2,],type = "l",col = colorstr,lwd=10)
+      lines(p[1,],p[2,],type = "l",col = colorstr,lwd=8)
     }else{
-      plot(p[1,],p[2,],type = "l",col = colorstr,lwd=10,axes=FALSE, xlab = '', ylab = '', main = filename )
+      plot(p[1,],p[2,],ylim = rev(range(p[2,])),type = "l",col = colorstr,lwd=8,axes=FALSE, xlab = '', ylab = '', main = filename )
     }
     for (i in 1:T_col){
       text(p[1,i],p[2,i],toString(i),cex = 1)
@@ -391,11 +392,12 @@ plot_dendrogram <- function(geo_dist, color_code_path_name){
   class_color_map <- match(Taxoncolorcodes$class, class_color_code$label)
   D.clust <- hclust(as.dist(pracma::squareform(geo_dist)),method="average")
   D.clust$labels <- filenames
-  #plot(D.clust, xlab = '', main='Clustering', sub='', ylab='')
+  par(cex = 3.5, mar = c(5,8,4,1))
+  plot(D.clust, xlab = '', main='Clustering', sub='', ylab='',lwd = 6)
   #clus = cutree(D.clust, nlevels(factor(Taxoncolorcodes$class)))
   #a = ape::as.phylo(D.clust)
   #a$tip.color = as.character(class_color_code$colors[as.integer(factor(Taxoncolorcodes$class))])
-  ape::plot.phylo(ape::as.phylo(D.clust), tip.color =  as.character(class_color_code$colors[as.integer(factor(Taxoncolorcodes$class))]), cex = 0.7)
+  #ape::plot.phylo(ape::as.phylo(D.clust), tip.color =  as.character(class_color_code$colors[as.integer(factor(Taxoncolorcodes$class))]), cex = 0.7)
 }
 
 plotpca <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), titletxt = "") {
