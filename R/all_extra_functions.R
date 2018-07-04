@@ -424,7 +424,7 @@ save_q_shapes <- function(v_szfilename, qarray_temp){
 load_gamma <- function(filename){
   read.filename <- file('gamma_R.dat', 'rb')
   N = readBin(read.filename,"integer",n = 1)
-  gamma = readBin(read.filename,"double",n = 100, size = 4)
+  gamma = readBin(read.filename,"double",N, size = 4)
   close(read.filename)
   return(gamma)
 }
