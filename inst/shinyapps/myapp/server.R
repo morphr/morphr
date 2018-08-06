@@ -27,7 +27,7 @@ server <- function(input, output) {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Making plot", value =1)
-    X = main_closed(input$file1$datapath)
+    X = main(input$file1$datapath)
     qarray = list()
     for(i in 1:length(X)){
       qarray[[i]] = curve_to_q(X[[i]])
@@ -49,7 +49,8 @@ server <- function(input, output) {
       sum_sq_dist = temp_all_mean_shape[[6]]
       qmean_new = project_curve(qmean)
       pmean = q_to_curve(qmean_new)
-      plot_curve(-pmean,'blue', l = FALSE, filename = "Mean Shape")
+      pmean_new = rbind(pmean[1,],-pmean[2,])
+      plot_curve(pmean,'blue', l = FALSE, filename = "Mean Shape")
     }
     
   })
@@ -66,7 +67,7 @@ server <- function(input, output) {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Calculating distances", value = 1)
-    X = main_closed(input$file1$datapath)
+    X = main(input$file1$datapath)
     qarray = list()
     for(i in 1:length(X)){
       qarray[[i]] = curve_to_q(X[[i]])
@@ -103,7 +104,7 @@ server <- function(input, output) {
     req(input$file1)
     req(input$Color_File)
     #req(input$var == "Original Curves")
-    X = main_closed(input$file1$datapath)
+    X = main(input$file1$datapath)
     Taxoncolorcodes <- readr::read_csv(input$Color_File$datapath,col_names = TRUE)
     filenames <- Taxoncolorcodes$specimen_ID
     color_code <- Taxoncolorcodes$color
@@ -116,8 +117,8 @@ server <- function(input, output) {
         par(mfrow=c(1,length(X)))
         par(mar=c(1,1,1,1))
       }else{
-        rr <- ceiling(length(X)/8)
-        par(mfrow=c(rr,8))
+        rr <- ceiling(length(X)/7)
+        par(mfrow=c(rr,7))
         par(mar=c(1,1,1,1))
       }
       for(i in 1:length(X)){
@@ -140,7 +141,7 @@ server <- function(input, output) {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Making PCA plot", value = 1)
-    X = main_closed(input$file1$datapath)
+    X = main(input$file1$datapath)
     qarray = list()
     for(i in 1:length(X)){
       qarray[[i]] = curve_to_q(X[[i]])
@@ -166,7 +167,7 @@ server <- function(input, output) {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Making MDS plot", value = 1)
-    X = main_closed(input$file1$datapath)
+    X = main(input$file1$datapath)
     qarray = list()
     for(i in 1:length(X)){
       qarray[[i]] = curve_to_q(X[[i]])
@@ -191,7 +192,7 @@ server <- function(input, output) {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Making Dendogram", value = 1)
-    X = main_closed(input$file1$datapath)
+    X = main(input$file1$datapath)
     qarray = list()
     for(i in 1:length(X)){
       qarray[[i]] = curve_to_q(X[[i]])
@@ -210,7 +211,7 @@ server <- function(input, output) {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Making Deformation Field Plot", value = 1)
-    X = main_closed(input$file1$datapath)
+    X = main(input$file1$datapath)
     qarray = list()
     for(i in 1:length(X)){
       qarray[[i]] = curve_to_q(X[[i]])
@@ -232,7 +233,7 @@ server <- function(input, output) {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = "Making PCA Variation Plot", value = 1)
-    X = main_closed(input$file1$datapath)
+    X = main(input$file1$datapath)
     qarray = list()
     for(i in 1:length(X)){
       qarray[[i]] = curve_to_q(X[[i]])

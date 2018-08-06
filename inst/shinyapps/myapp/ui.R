@@ -1,7 +1,7 @@
 ui <- fluidPage(
   
   # App title ----
-  titlePanel("Import Data"),
+  titlePanel(""),
   
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
@@ -10,11 +10,11 @@ ui <- fluidPage(
     sidebarPanel(
       
       # Input: Select a file ----
-      h3("File Uploading"),
-      fileInput("file1", "Choose a ucf or svg file list",
+      h3("Import Data"),
+      fileInput("file1", "ucf or svg file list for curve coordinates",
                 multiple = FALSE,
                 accept = c("text/plain")),
-      fileInput("Color_File", "Choose a demographics csv",
+      fileInput("Color_File", "Demographics csv",
                 multiple = FALSE,
                 accept = c("csv")),
       textOutput("contents"),
@@ -46,7 +46,7 @@ ui <- fluidPage(
     mainPanel(
       
       # Output: Data file ----
-      titlePanel("Shape Analysis Using Square Root Velocity Function"),
+      titlePanel("Shape Analysis Using Square Root Velocity Functions"),
       plotOutput("plots"),
       plotly::plotlyOutput("geo_dist", width = "100%", height="600px"),
       plotOutput("mean_shape",width = "100%", height="600px"),
