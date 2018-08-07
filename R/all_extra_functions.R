@@ -14,17 +14,17 @@ back_parallel_transport_c <- function(wfinal, alpha){
     return(list(wtilde, twtilde))
 }
 
-compute_elastic_geodesic <- function(q1,q2,stp = 7,d = 5,dt = 0.1){
+compute_elastic_geodesic_closed <- function(q1,q2,stp = 7,d = 5,dt = 0.1){
     q2 = project_curve(q2)
     n = length(q1)
     T_col = ncol(q1)
     q2 = regroup(q1,q2)
     q2new = find_rotation_and_seed_unique(q1,q2)
-    temp_all = compute_geodesic_c_factor_d(q1,q2new,stp,d,dt)
+    temp_all = compute_geodesic_c_factor_d_closed(q1,q2new,stp,d,dt)
     return(temp_all)
 }
 
-compute_geodesic_c_factor_d <- function(q1,q2,stp,d,dt){
+compute_geodesic_c_factor_d_closed <- function(q1,q2,stp,d,dt){
     iter = 1
     n = nrow(q1)
     T_col = ncol(q1)
@@ -202,7 +202,7 @@ find_best_rotation <- function(q1,q2){
     return(list(q2new, R))
 }
 
-find_mean_shape <- function(qarray){
+find_mean_shape_closed <- function(qarray){
     n = nrow(qarray[[1]])
     T_col = ncol(qarray[[1]])
     N = length(qarray)
@@ -226,7 +226,7 @@ find_mean_shape <- function(qarray){
         for(i in 1:N){
             cat(i, '\n')
             qshapes[[2]] = qarray[[i]]
-            temp_all_2 = geodesic_distance_all(qshapes)
+            temp_all_2 = geodesic_distance_all_closed(qshapes)
             alpha = temp_all_2[[1]]
             alpha_t = temp_all_2[[2]]
             Anormiter = temp_all_2[[3]]
@@ -321,7 +321,7 @@ form_basis_normal_a <- function(q){
     return(delG)
 }
 
-geodesic_distance_all <- function(qarray){
+geodesic_distance_all_closed <- function(qarray){
     stp = 6
     dt = 0.1
     d = 5
@@ -339,7 +339,7 @@ geodesic_distance_all <- function(qarray){
             q1 = qarray[[i]]
             q2 = qarray[[j]]
             cat("Computing elastic geodesic with", i, 'and', j, '\n')
-            temp_all = compute_elastic_geodesic(q1,q2,stp,d,dt)
+            temp_all = compute_elastic_geodesic_closed(q1,q2,stp,d,dt)
             alpha[[ctr]] = temp_all[[1]]
             alpha_t[[ctr]] = temp_all[[2]]
             Anormiter[[ctr]] = temp_all[[3]]

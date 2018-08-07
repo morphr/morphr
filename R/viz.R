@@ -258,7 +258,7 @@ mdsplot <- function(alpha_t_array, geo_dis, X, color_code_path_name, titletxt ="
   xpos = Y[i,1]
   ypos = -Y[i,2]
   zpos = 0
-  pfinal = repose_curve(q_to_curve(curve_to_q(X[[i]])),0.2,R,c(xpos,ypos,0))
+  pfinal = repose_curve(q_to_curve(curve_to_q_closed(X[[i]])),0.2,R,c(xpos,ypos,0))
   df <- data.frame(x = pfinal[1, ], y = pfinal[2,])
   df2 <- data.frame(labelname = filenames[i], x = xpos, y = ypos)
   p <- ggplot2::ggplot(df, ggplot2::aes(x , y) ) + ggplot2::geom_path(data = df, color = as.character(class_color_code$colors[class_color_map[i]]), size=1) + 
@@ -267,7 +267,7 @@ mdsplot <- function(alpha_t_array, geo_dis, X, color_code_path_name, titletxt ="
     xpos = Y[i,1]
     ypos = -Y[i,2]
     zpos = 0
-    pfinal = repose_curve(q_to_curve(curve_to_q(X[[i]])),0.2,R,c(xpos,ypos,0))
+    pfinal = repose_curve(q_to_curve(curve_to_q_closed(X[[i]])),0.2,R,c(xpos,ypos,0))
     df <- data.frame(x = pfinal[1, ], y = pfinal[2,])
     df2 <- data.frame(labelname = filenames[i], x = xpos, y = ypos)
     p <- p+ggplot2::geom_path(data = df, color = as.character(class_color_code$colors[class_color_map[i]]), size=1) + 

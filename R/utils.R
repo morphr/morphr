@@ -53,7 +53,7 @@ compute_covariance <- function(qmean, alpha_t_array){
 #' @param p coordinate curve
 #' @return q function
 #' @export
-curve_to_q <- function(p){
+curve_to_q_closed <- function(p){
   n <- nrow(p)
   Tcoord <- ncol(p)
   pdiff <- list()

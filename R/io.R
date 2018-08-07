@@ -162,7 +162,7 @@ read_ucf_multiple_levels <- function(filepath, ndim){
   
 }
 
-main_closed <- function(path){
+main<- function(path){
   fid = read.table(path, stringsAsFactors = FALSE)[[1]]
   i = 1
   X = NULL
@@ -183,7 +183,7 @@ main_closed <- function(path){
   
   qarray = list()
   for(i in 1:length(X)){
-    qarray[[i]] = curve_to_q(X[[i]])
+    qarray[[i]] = curve_to_q_closed(X[[i]])
   }
   
   n = nrow(qarray[[1]])
