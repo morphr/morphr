@@ -1,3 +1,30 @@
+load_data <- function(dir,demographic_path,size = 150){
+  demographic = readr::read_csv(demographic_path)
+  demographic = as.data.frame(demographic)
+  pop = unique(demographic$population)
+  fid = c()
+  for(i in 1:nrow(demographic)){
+    thickness_path = paste(demographic$subjid[i],"_thickness_elastic.csv",sep = '')
+    temp_dir = paste(dir,demographic$population[i],demographic$subjid[i],sep = '/')
+    temp_dir_whole = paste(temp_dir,thickness_path,sep = '/')
+    fid[i]=temp_dir_whole
+  }
+  
+  
+  thickness_matrix = matrix(rep(0,length(fid)*size),length(fid),size)
+  for(i in 1:length(fid)){
+    fname <- fid[i]
+    thickness_matrix[i,] = t(as.matrix(readr::read_csv(fname)[,2]))
+  }
+  thickness_matrix = as.data.frame(thickness_matrix)
+  demographics = cbind(demographic,thickness_matrix)
+  #utils::write.csv(demographics, file.path(outdir,paste("thickness_demographics.csv",sep = '')))
+  return(demographics)
+}
+
+
+
+
 p_adjust <- function (pvalues, method = "fdr") {
   valid_methods <- c(p.adjust.methods, "perm")
   if (!(method %in% valid_methods)) {
@@ -98,9 +125,13 @@ lm_vec <- function(main_effect="", covariates, demographic,y) {
   
   if (main_effect == "")
     main_effect = "(Intercept)" # If main_effect is empty, return the parameters of the Intercept
-  
-  se <- sqrt(diag(solve(t(X) %*% X)))[[main_effect]] * sqrt(rss / (N-Np-1)) # standard error
-  tvalues <- as.numeric(beta_coeff[main_effect, ]/(se + .Machine$double.eps)) # tvalue
+  if(main_effect%in%sqrt(diag(solve(t(X) %*% X)))){
+    se <- sqrt(diag(solve(t(X) %*% X)))[[main_effect]] * sqrt(rss / (N-Np-1))
+    tvalues <- as.numeric(beta_coeff[main_effect, ]/(se + .Machine$double.eps)) # tvalue
+  }else{
+    se <- sqrt(diag(solve(t(X) %*% X)))[[2]] * sqrt(rss / (N-Np-1))
+    tvalues <- as.numeric(beta_coeff[2, ]/(se + .Machine$double.eps)) # tvalue
+  }
   pvalues <- 2*pt(abs(tvalues), N-Np-1, lower.tail = FALSE) # pvalu
   residuals <- data_array - Y
   pvalues[abs(pvalues) <= .Machine$double.eps] <- 100*.Machine$double.eps
@@ -141,4 +172,14 @@ shape_anova <- function(main_effect="", covariates="", demographic, y) {
   anova_model$pvalues_adjusted <- p_adjust(anova_model$pvalues)
   message('Done.')
   return(anova_model)
+}
+
+calculate_p_value <- function(main_effect="", covariates="", loaded_data,demographic_path,size = 150){
+  original_demographic = readr::read_csv(demographic_path)
+  original_demographic = as.data.frame(original_demographic)
+  p_value = c()
+  for(i in 1:size){
+    p_value[i] = shape_anova(main_effect,covariates,loaded_data,paste("V",i,sep = ''))$pvalues_adjusted[[1]]
+  }
+  return(p_value)
 }
