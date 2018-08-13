@@ -202,7 +202,7 @@ find_best_rotation <- function(q1,q2){
     return(list(q2new, R))
 }
 
-find_mean_shape_closed <- function(qarray){
+find_mean_shape_closed <- function(qarray,just_mean_shape = FALSE){
     n = nrow(qarray[[1]])
     T_col = ncol(qarray[[1]])
     N = length(qarray)
@@ -239,6 +239,9 @@ find_mean_shape_closed <- function(qarray){
         norm_alpha_t_mean[iter] = sqrt(innerprod_q(alpha_t_mean, alpha_t_mean))
         sum_sq_dist_iter[iter] = sum_sq_dist
         qmean = geodesic_flow(qmean, alpha_t_mean, stp)[[1]]
+    }
+    if(just_mean_shape){
+      return(qmean = qmean)
     }
     qshapes[[1]] = qmean
     gamma_array = list()
