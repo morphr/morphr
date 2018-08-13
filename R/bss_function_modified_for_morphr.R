@@ -1,30 +1,3 @@
-load_data <- function(dir,demographic_path,size = 150){
-  demographic = readr::read_csv(demographic_path)
-  demographic = as.data.frame(demographic)
-  pop = unique(demographic$population)
-  fid = c()
-  for(i in 1:nrow(demographic)){
-    thickness_path = paste(demographic$subjid[i],"_thickness_elastic.csv",sep = '')
-    temp_dir = paste(dir,demographic$population[i],demographic$subjid[i],sep = '/')
-    temp_dir_whole = paste(temp_dir,thickness_path,sep = '/')
-    fid[i]=temp_dir_whole
-  }
-  
-  
-  thickness_matrix = matrix(rep(0,length(fid)*size),length(fid),size)
-  for(i in 1:length(fid)){
-    fname <- fid[i]
-    thickness_matrix[i,] = t(as.matrix(readr::read_csv(fname)[,2]))
-  }
-  thickness_matrix = as.data.frame(thickness_matrix)
-  demographics = cbind(demographic,thickness_matrix)
-  #utils::write.csv(demographics, file.path(outdir,paste("thickness_demographics.csv",sep = '')))
-  return(demographics)
-}
-
-
-
-
 p_adjust <- function (pvalues, method = "fdr") {
   valid_methods <- c(p.adjust.methods, "perm")
   if (!(method %in% valid_methods)) {
