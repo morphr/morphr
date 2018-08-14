@@ -48,9 +48,9 @@ compute_geodesic_c_factor_d_closed <- function(q1,q2,stp,d,dt){
         EgeoC = 0
         gamma = s
         geo_dist = 0
-        alpha = list()
-        for(i in 1:stp){
-            alpha[[i]] = q1
+        alpha = array(0,dim=c(n,T_col,stp+1))
+        for(i in 1:(stp+1)){
+            alpha[,,i] = q1
         }
         alpha_t = array(0,dim=c(n,T_col,stp+1))
         return(list(alpha,alpha_t,Anormiter,EgeoC,gamma,geo_dist))
