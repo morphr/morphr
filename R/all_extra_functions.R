@@ -270,6 +270,81 @@ find_mean_shape_closed <- function(qarray,just_mean_shape = FALSE){
     return(list(qmean=qmean,alpha_array=alpha_array, alpha_t_array=alpha_t_array,norm_alpha_t_mean=norm_alpha_t_mean,gamma_array=gamma_array,sum_sq_dist_iter=sum_sq_dist_iter,Egeo_array=Egeo_array,geo_dist_array=geo_dist_array))
 }
 
+
+find_mean_shape_open <- function(qarray,just_mean_shape = FALSE){
+  n = nrow(qarray[[1]])
+  T_col = ncol(qarray[[1]])
+  N = length(qarray)
+  stp = 7
+  dt = 0.1
+  d = 10
+  qmean = pracma::zeros(n,T_col)
+  for (i in 1:N){
+    qmean = qmean+qarray[[i]]
+  }
+  qmean = qmean/N
+  qmean = project_b(qmean)
+  Xmean = q_to_curve(qmean)
+  qorig = qmean
+  qshapes = list()
+  norm_alpha_t_mean = list()
+  sum_sq_dist_iter = list()
+  for (iter in 1:10){
+    cat('Iteration ', iter, '\n')
+    alpha_t_mean = pracma::zeros(n,T_col)
+    sum_sq_dist = 0
+    qshapes[[1]] = qmean
+    for(i in 1:N){
+      cat(i, '\n')
+      qshapes[[1]] = qmean
+      qshapes[[2]] = qarray[[i]]
+      temp_all_2 = geodesic_distance_all_open(qshapes)
+      alpha = temp_all_2[[1]]
+      alpha_t = temp_all_2[[2]]
+      Anormiter = temp_all_2[[3]]
+      Egeo = temp_all_2[[4]]
+      gamma = temp_all_2[[5]]
+      geo_dist = temp_all_2[[6]]
+      alpha_t_mean = alpha_t_mean+alpha_t[[1]][,,2]/N
+      sum_sq_dist = sum_sq_dist+geo_dist[[1]]^2
+    }
+    norm_alpha_t_mean[iter] = sqrt(innerprod_q(alpha_t_mean, alpha_t_mean))
+    sum_sq_dist_iter[iter] = sum_sq_dist
+    qmean = geodesic_flow(qmean, alpha_t_mean, stp)[[1]]
+  }
+  if(just_mean_shape){
+    return(qmean = qmean)
+  }
+  qshapes[[1]] = qmean
+  gamma_array = list()
+  alpha_t_array = list()
+  alpha_array = list()
+  Anorm_array = list()
+  Egeo_array = list()
+  geo_dist_array = list()
+  for(i in 1:N){
+    qshapes[[2]] = qarray[[i]]
+    temp_all_3 = geodesic_distance_all_open(qshapes)
+    alpha = temp_all_3[[1]]
+    alpha_t = temp_all_3[[2]]
+    Anormiter = temp_all_3[[3]]
+    Egeo = temp_all_3[[4]]
+    gamma_array[[i]] = temp_all_3[[5]]
+    geo_dist = temp_all_3[[6]]
+    alpha_t_array[[i]] = alpha_t[[1]][,,2]
+    alpha_array[[i]] = alpha[[1]]
+    Anorm_array[[i]] = Anormiter[[1]]
+    Egeo_array[[i]] = Egeo[[1]]
+    geo_dist_array[[i]] = geo_dist[[1]]
+  }
+  sum_sq_dist_iter = unlist(sum_sq_dist_iter)
+  sum_sq_dist_iter = sum_sq_dist_iter/N
+  return(list(qmean=qmean,alpha_array=alpha_array, alpha_t_array=alpha_t_array,norm_alpha_t_mean=norm_alpha_t_mean,gamma_array=gamma_array,sum_sq_dist_iter=sum_sq_dist_iter,Egeo_array=Egeo_array,geo_dist_array=geo_dist_array))
+}
+
+
+
+
 form_basis_d_q <- function(V,q){
     d = dim(V)[1]
     n = dim(q)[1]
