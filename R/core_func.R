@@ -110,7 +110,7 @@ project_to_basis <- function(alpha_t_array,Y){
   for(i in 1:length(alpha_t_array)){
     X[[i]] = pracma::zeros(n,T_col)
     for(j in 1:length(Y)){
-      X_proj[i,j] = innerprod_q(alpha_t_array[[i]],Y[[j]])
+      X_proj[i,j] = innerprod_q(alpha_t_array[i],Y[[j]])
       X[[i]] = X[[i]]+X_proj[i,j]*Y[[j]]
     } 
   }

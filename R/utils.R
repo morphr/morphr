@@ -208,7 +208,7 @@ save_eigen_projections <- function(covdata,alpha_t_array,eigendirs,filename){
   names(data_to_write) <- name
   for(i in 1:length(alpha_t_array)){
     for(ctr in 1:length(eigendirs)){
-      temp_ptb <- project_to_basis(alpha_t_array[i],covdata$Y)
+      temp_ptb <- project_to_basis(alpha_t_array[[i]],covdata$Y)
       data_to_write[[ctr]][i] = temp_ptb[[2]]%*%covdata$U[,eigendirs[ctr]]
     }
   }
