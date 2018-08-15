@@ -403,7 +403,6 @@ plot_dendrogram <- function(geo_dist, color_code_path_name){
 plotpca <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), titletxt = "") {
   Taxoncolorcodes <- readr::read_csv(colorpath,col_names = TRUE)
   filenames <- Taxoncolorcodes$specimen_ID
-  color_code <- Taxoncolorcodes$color
   covdata = build_tpca_model_from_mean(qmean,alpha_t_array)
   eigproj_landmarks <- get_eigen_projections(covdata,alpha_t_array,1:5)
   R = pracma::eye(2)
@@ -443,6 +442,7 @@ plotpca <- function(qmean, alpha_t_array, qarray, colorpath, eigdir = c(1, 2), t
 
 PCA_plot <- function(alpha_t_array, qmean, qarray, colorpath){
   Taxoncolorcodes <- readr::read_csv(colorpath,col_names = TRUE)
+  Taxoncolorcodes = as.data.frame(Taxoncolorcodes)
   filenames <- Taxoncolorcodes$specimen_ID
   color_code <- Taxoncolorcodes$color
   covdata = build_tpca_model_from_mean(qmean,alpha_t_array)
