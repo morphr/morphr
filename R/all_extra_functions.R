@@ -419,9 +419,6 @@ geodesic_distance_all_closed <- function(qarray,verbose = TRUE){
     EgeoC = list()
     gamma = list()
     geo_dist = list()
-    if(verbose){
-      cat('Total of ', num_data_sets,' datasets to compute.\n')
-    }
     for (i in 1:(num_data_sets-1)){
         for (j in (i+1):num_data_sets){
             q1 = qarray[[i]]
