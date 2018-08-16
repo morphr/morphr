@@ -202,7 +202,7 @@ find_best_rotation <- function(q1,q2){
     return(list(q2new, R))
 }
 
-find_mean_shape_closed <- function(qarray,just_mean_shape = FALSE){
+find_mean_shape_closed <- function(qarray,just_mean_shape = FALSE,verbose = TRUE){
     n = nrow(qarray[[1]])
     T_col = ncol(qarray[[1]])
     N = length(qarray)
@@ -219,14 +219,18 @@ find_mean_shape_closed <- function(qarray,just_mean_shape = FALSE){
     norm_alpha_t_mean = list()
     sum_sq_dist_iter = list()
     for (iter in 1:6){
+      if(verbose){
         cat('Iteration ', iter, '\n')
+      }
         alpha_t_mean = pracma::zeros(n,T_col)
         sum_sq_dist = 0
         qshapes[[1]] = qmean
         for(i in 1:N){
+          if(verbose){
             cat(i, '\n')
+          }
             qshapes[[2]] = qarray[[i]]
-            temp_all_2 = geodesic_distance_all_closed(qshapes)
+            temp_all_2 = geodesic_distance_all_closed(qshapes,verbose)
             alpha = temp_all_2[[1]]
             alpha_t = temp_all_2[[2]]
             Anormiter = temp_all_2[[3]]
@@ -271,7 +275,7 @@ find_mean_shape_closed <- function(qarray,just_mean_shape = FALSE){
 }
 
 
-find_mean_shape_open <- function(qarray,just_mean_shape = FALSE){
+find_mean_shape_open <- function(qarray,just_mean_shape = FALSE,verbose = TRUE){
   n = nrow(qarray[[1]])
   T_col = ncol(qarray[[1]])
   N = length(qarray)
@@ -290,12 +294,16 @@ find_mean_shape_open <- function(qarray,just_mean_shape = FALSE){
   norm_alpha_t_mean = list()
   sum_sq_dist_iter = list()
   for (iter in 1:10){
-    cat('Iteration ', iter, '\n')
+    if(verbose){
+      cat('Iteration ', iter, '\n')
+    }
     alpha_t_mean = pracma::zeros(n,T_col)
     sum_sq_dist = 0
     qshapes[[1]] = qmean
     for(i in 1:N){
-      cat(i, '\n')
+      if(verbose){
+        cat(i, '\n')
+      }
       qshapes[[1]] = qmean
       qshapes[[2]] = qarray[[i]]
       temp_all_2 = geodesic_distance_all_open(qshapes)
@@ -399,7 +407,7 @@ form_basis_normal_a <- function(q){
     return(delG)
 }
 
-geodesic_distance_all_closed <- function(qarray){
+geodesic_distance_all_closed <- function(qarray,verbose = TRUE){
     stp = 6
     dt = 0.1
     d = 5
@@ -411,12 +419,16 @@ geodesic_distance_all_closed <- function(qarray){
     EgeoC = list()
     gamma = list()
     geo_dist = list()
-    cat('Total of ', num_data_sets,' datasets to compute.\n')
+    if(verbose){
+      cat('Total of ', num_data_sets,' datasets to compute.\n')
+    }
     for (i in 1:(num_data_sets-1)){
         for (j in (i+1):num_data_sets){
             q1 = qarray[[i]]
             q2 = qarray[[j]]
-            cat("Computing elastic geodesic with", i, 'and', j, '\n')
+            if(verbose){
+              cat("Computing elastic geodesic with", i, 'and', j, '\n')
+            }
             temp_all = compute_elastic_geodesic_closed(q1,q2,stp,d,dt)
             alpha[[ctr]] = temp_all[[1]]
             alpha_t[[ctr]] = temp_all[[2]]
