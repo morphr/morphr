@@ -256,7 +256,7 @@ find_mean_shape_closed <- function(qarray,just_mean_shape = FALSE,verbose = TRUE
     geo_dist_array = list()
     for(i in 1:N){
         qshapes[[2]] = qarray[[i]]
-        temp_all_3 = geodesic_distance_all_closed(qshapes)
+        temp_all_3 = geodesic_distance_all_closed(qshapes,verbose)
         alpha = temp_all_3[[1]]
         alpha_t = temp_all_3[[2]]
         Anormiter = temp_all_3[[3]]
