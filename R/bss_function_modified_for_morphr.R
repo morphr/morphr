@@ -156,3 +156,69 @@ calculate_p_value <- function(main_effect="", covariates="", loaded_data,demogra
   }
   return(p_value)
 }
+
+log10_transform <- function(values){
+    eps <- .Machine$double.eps
+    sgn <- sign(values)
+    sgn[sgn == 0] <- 1
+    values[abs(values) < eps] <- eps
+    logvalues <- -1 * sgn * log10(abs(values))
+    return(logvalues)
+}
+
+get_logpvalue_colors <- function(cmap_name, values){
+    pex <- max(abs(values))
+    pFDRneglog <- 1 * log10(0.05)
+    pFDRposlog <- -1 * log10(0.05)
+    N <- 256
+    if (pex < -1 * log10(0.05)) {
+        pex <- -1 * log10(0.05) * 1.001
+        lut <- get_color_palette("gray", N)
+    }
+    else {
+        totlen <- 2 * pex
+        neglen <- pex - abs(pFDRneglog)
+        zerolen <- pFDRposlog - pFDRneglog
+        poslen <- pex - pFDRposlog
+        negcolors <- get_color_palette("rev_winter", round(neglen *
+        N/(1.001 * totlen)))
+        zerocolors <- get_color_palette("gray", round(zerolen *
+        N/(1.001 * totlen)))
+        poscolors <- get_color_palette("spring", round(poslen *
+        N/(1.001 * totlen)))
+        lut <- c(negcolors, zerocolors, poscolors)
+    }
+    lut <- colorRampPalette(lut)(256)
+    fnmap <- colorRamp(lut)
+    values_0_to_1 <- (values + pex)/(2 * pex + .Machine$double.eps)
+    rgbcolors <- fnmap(values_0_to_1)/255
+    cnegmin <- pFDRneglog
+    cnegmax <- -pex
+    cposmin <- pFDRposlog
+    cposmax <- pex
+    return(list(rgbcolors = rgbcolors, lut = lut, vmin = -1 *
+    pex, vmax = pex, cnegmin = cnegmin, cnegmax = cnegmax,
+    cposmin = cposmin, cposmax = cposmax))
+}
+
+get_color_palette <- function (cmap_name, N)
+{
+    switch(cmap_name, rev_spring = {
+        return(rev(colorRampPalette(c("#FF00FFFF", "#FFFF00FF"))(ceiling(N))))
+    }, spring = {
+        return(colorRampPalette(c("#FF00FFFF", "#FFFF00FF"))(ceiling(N)))
+    }, rev_winter = {
+        return(rev(colorRampPalette(c("#0000FF", "#00FF80"))(ceiling(N))))
+    }, winter = {
+        return(colorRampPalette(c("#0000FF", "#00FF80"))(ceiling(N)))
+    }, white = {
+        return(colorRampPalette(c(hexcolrstr$white))(ceiling(N)))
+    }, gray = {
+        return(colorRampPalette(c(hexcolrstr$gray))(ceiling(N)))
+    })
+}
+
+hexcolrstr <- list(
+white = "#FFFFFF",
+gray = "#CCCCCC"
+)
