@@ -1,4 +1,4 @@
-<img src="https://github.com/morphr/morphr/raw/master/logo.png" width="350"/>
+<img src="https://github.com/morphr/morphr/blob/master/assets/images/logo.png" width="350"/>
 
 # Morphr (c) 2018 
 
