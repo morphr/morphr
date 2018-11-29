@@ -2,7 +2,7 @@
 
 # Morphr (c) 2018 
 
-[**Morphr**](https://github.com/morphr/morphr) implements standard techniques for the representation of shapes, calculation of mean templates, statistical analysis (clustering, principal component analysis (PCA) and estimating deformations to mean shapes) and accepts case studies for medical, anatomical, and paleontological shape data. The package also implements convenient graphical user interface built using R shiny, allowing people with limited coding experience to conduct shape analysis case studies easily. 
+[**Morphr**](https://github.com/morphr/morphr) implements standard techniques for the representation of shapes, calculation of mean templates, statistical analysis (clustering, principal component analysis (PCA) and estimating deformations to mean shapes). It accepts case studies for medical, anatomical, and paleontological shape data. The package also implements convenient graphical user interface built using R shiny, allowing researchers with limited coding experience to conduct shape analysis case studies easily. 
 
 The idea behind **Morphr** is not only to provide tools for analysis of continuous shapes and curves, but also a set of integrated functionalities that can be used by morphologist with limited coding experience to conduct shape analysis case studies easily. The package also utilizes ideas and functions from elastic functional data analysis pacakge: [**fdasrvf**](https://cran.r-project.org/web/packages/fdasrvf/index.html).
 
