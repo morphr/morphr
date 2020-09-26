@@ -1,6 +1,6 @@
 <img src="https://github.com/morphr/morphr/blob/master/assets/images/logo.png" width="350"/>
 
-# Morphr (c) 2018 
+# Morphr (c) 2020
 
 [**Morphr**](https://github.com/morphr/morphr) implements standard techniques for the representation of shapes, calculation of mean templates, statistical analysis (clustering, principal component analysis (PCA) and estimating deformations to mean shapes). It accepts case studies for medical, anatomical, and paleontological shape data. The package also implements convenient graphical user interface built using R shiny, allowing researchers with limited coding experience to conduct shape analysis case studies easily. 
 
